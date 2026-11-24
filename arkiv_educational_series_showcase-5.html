@@ -1,0 +1,2186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Arkiv — The Present Simple Reading Room &amp; Series Showcase</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+            serif: ['Newsreader', 'Georgia', 'serif'],
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    /* Quiet introvert reading-room palettes & low-glare bookish comfort */
+    :root {
+      --bg-room: #F6F3EC;
+      --bg-sheet: #FCFBF7;
+      --bg-tint: #EFECE4;
+      --border-soft: #E3DDD1;
+      --border-hover: #C6BEB0;
+      --text-main: #24221E;
+      --text-muted: #66625A;
+      --accent-ink: #476053;
+      --accent-hover: #364B40;
+      --accent-soft: rgba(71, 96, 83, 0.11);
+      --overlay-room: rgba(36, 34, 30, 0.36);
+      --spine-tint: rgba(71, 96, 83, 0.06);
+    }
+
+    html[data-ambiance="dusk"] {
+      --bg-room: #22262B;
+      --bg-sheet: #292E34;
+      --bg-tint: #30363D;
+      --border-soft: #3B424B;
+      --border-hover: #525B67;
+      --text-main: #E6E9EC;
+      --text-muted: #9FA7B2;
+      --accent-ink: #88A899;
+      --accent-hover: #9FBCB0;
+      --accent-soft: rgba(136, 168, 153, 0.14);
+      --overlay-room: rgba(16, 19, 23, 0.56);
+      --spine-tint: rgba(136, 168, 153, 0.08);
+    }
+
+    html[data-ambiance="lamp"] {
+      --bg-room: #0F1722;
+      --bg-sheet: #15202F;
+      --bg-tint: #1B293C;
+      --border-soft: #26374F;
+      --border-hover: #384F70;
+      --text-main: #E4ECF5;
+      --text-muted: #94A6BC;
+      --accent-ink: #8FB37E;
+      --accent-hover: #A6C697;
+      --accent-soft: rgba(143, 179, 126, 0.14);
+      --overlay-room: rgba(7, 11, 17, 0.68);
+      --spine-tint: rgba(143, 179, 126, 0.08);
+    }
+
+    html, body {
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+
+    body {
+      background-color: var(--bg-room);
+      color: var(--text-main);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      transition: background-color 320ms ease, color 320ms ease;
+    }
+
+    .room-surface {
+      background-color: var(--bg-room);
+      border-color: var(--border-soft);
+      transition: background-color 320ms ease, border-color 320ms ease;
+    }
+
+    .tint-surface {
+      background-color: var(--bg-tint);
+      border-color: var(--border-soft);
+      color: var(--text-main);
+      transition: background-color 320ms ease, border-color 320ms ease, color 320ms ease;
+    }
+
+    .book-sheet {
+      background-color: var(--bg-sheet);
+      border: 1px solid var(--border-soft);
+      border-radius: 18px;
+      transition: border-color 260ms ease, background-color 320ms ease, transform 260ms ease;
+    }
+
+    @media (hover: hover) {
+      .book-sheet:hover {
+        border-color: var(--border-hover);
+      }
+    }
+
+    .book-spine-accent {
+      background: linear-gradient(90deg, var(--accent-soft) 0%, transparent 100%);
+      border-left: 3px solid var(--accent-ink);
+    }
+
+    .text-main { color: var(--text-main); }
+    .text-muted { color: var(--text-muted); }
+    .text-accent { color: var(--accent-ink); }
+    .border-soft { border-color: var(--border-soft); }
+
+    .btn-accent {
+      background-color: var(--accent-ink);
+      color: var(--bg-sheet);
+      transition: background-color 220ms ease, color 220ms ease, border-color 220ms ease;
+    }
+
+    .btn-accent:hover {
+      background-color: var(--accent-hover);
+    }
+
+    .reading-prose {
+      font-family: 'Newsreader', Georgia, serif;
+      color: var(--text-main);
+      transition: line-height 220ms ease, max-width 240ms ease, font-size 220ms ease, color 320ms ease;
+    }
+
+    .reading-prose p + p {
+      margin-top: 1.2em;
+    }
+
+    .quiet-scroll::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .quiet-scroll::-webkit-scrollbar-track {
+      background: var(--bg-tint);
+    }
+    .quiet-scroll::-webkit-scrollbar-thumb {
+      background: var(--border-hover);
+      border-radius: 9999px;
+    }
+
+    /* 3D Realistic Book Reader Styles */
+    .perspective-container {
+      perspective: 2500px;
+    }
+    .book-spread-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 1024px;
+      height: 85vh;
+      transform-style: preserve-3d;
+      transition: transform 1s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+    .book-spread-wrapper.closed {
+      transform: translateX(25%) rotateX(10deg) rotateY(-15deg) scale(0.9);
+    }
+    .book-spread-wrapper.open {
+      transform: translateX(0) rotateX(0deg) rotateY(0deg) scale(1);
+    }
+
+    .book-cover-3d {
+      position: absolute;
+      right: 0;
+      width: 50%;
+      height: 100%;
+      transform-origin: left center;
+      transform-style: preserve-3d;
+      transition: transform 1s cubic-bezier(0.25, 1, 0.5, 1);
+      z-index: 40;
+    }
+    .book-cover-3d.open {
+      transform: rotateY(-180deg);
+    }
+
+    .book-front-face, .book-back-face {
+      position: absolute;
+      inset: 0;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+    }
+    .book-front-face {
+      border-radius: 0 16px 16px 0;
+      border: 1px solid var(--border-soft);
+      border-left: 12px solid var(--accent-ink);
+      background: linear-gradient(135deg, var(--bg-sheet) 0%, var(--bg-tint) 100%);
+      box-shadow: 20px 20px 40px rgba(0,0,0,0.15);
+    }
+    .book-back-face {
+      transform: rotateY(180deg);
+      border-radius: 16px 0 0 16px;
+      background-color: var(--bg-sheet);
+      border: 1px solid var(--border-soft);
+      box-shadow: inset -10px 0 20px rgba(0,0,0,0.05);
+    }
+
+    .book-right-page {
+      position: absolute;
+      right: 0;
+      width: 50%;
+      height: 100%;
+      background-color: var(--bg-sheet);
+      border-radius: 0 16px 16px 0;
+      border: 1px solid var(--border-soft);
+      box-shadow: inset 10px 0 20px rgba(0,0,0,0.05), 20px 20px 40px rgba(0,0,0,0.15);
+      z-index: 10;
+    }
+
+    .iframe-spread-overlay {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 0.6s ease 0.6s;
+      z-index: 50;
+      border-radius: 16px;
+      overflow: hidden;
+      background-color: var(--bg-room);
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+      pointer-events: none;
+    }
+    .iframe-spread-overlay.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .book-gutter {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      width: 60px;
+      transform: translateX(-50%);
+      background: linear-gradient(to right,
+        rgba(0,0,0,0) 0%,
+        rgba(0,0,0,0.08) 45%,
+        rgba(0,0,0,0.15) 50%,
+        rgba(0,0,0,0.08) 55%,
+        rgba(0,0,0,0) 100%);
+      pointer-events: none;
+      z-index: 60;
+    }
+  </style>
+</head>
+<body class="min-h-screen antialiased selection:bg-[#476053]/15">
+
+  <!-- Calm Sticky Compact Reading Room Header -->
+  <header class="room-surface sticky top-0 z-30 border-b backdrop-blur-sm">
+    <div class="mx-auto flex max-w-6xl flex-col gap-2.5 px-4 py-3 sm:px-8 sm:py-3.5 lg:flex-row lg:items-center lg:justify-between">
+      <div class="flex items-center justify-between gap-2">
+        <a href="#top" data-nav="shelf" class="nav-brand-link flex min-w-0 items-center gap-2.5 rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-[#476053]/40">
+          <!-- Minimal Open Book Line Mark -->
+          <span class="tint-surface flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border text-accent">
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 6.5c-2.2-1.7-5.5-2-8.5-1v13c3-1 6.3-.7 8.5 1 2.2-1.7 5.5-2 8.5-1v-13c-3-1-6.3-.7-8.5 1z" />
+              <path d="M12 6.5v13.5" />
+            </svg>
+          </span>
+          <div class="min-w-0">
+            <span class="block truncate font-serif text-lg font-medium leading-none text-main">Arkiv</span>
+            <span class="mt-0.5 block truncate text-[11px] tracking-wide text-muted">The Present Simple • Quiet Reading Room</span>
+          </div>
+        </a>
+
+        <!-- Three Peaceful Reading Atmospheres -->
+        <div role="group" aria-label="Reading atmosphere" class="tint-surface inline-flex shrink-0 items-center rounded-full border p-0.5 lg:hidden">
+          <button type="button" data-ambiance="paper" aria-pressed="true" class="ambiance-btn btn-accent min-h-[32px] rounded-full px-2.5 text-[11px] font-medium">Paper</button>
+          <button type="button" data-ambiance="dusk" aria-pressed="false" class="ambiance-btn min-h-[32px] rounded-full px-2.5 text-[11px] font-medium text-muted hover:text-main">Dusk</button>
+          <button type="button" data-ambiance="lamp" aria-pressed="false" class="ambiance-btn min-h-[32px] rounded-full px-2.5 text-[11px] font-medium text-muted hover:text-main">Lamp</button>
+        </div>
+      </div>
+
+      <nav aria-label="Primary reading room navigation" class="flex flex-wrap items-center justify-between gap-2 lg:justify-end lg:gap-2.5">
+        <!-- Main Views -->
+        <div role="tablist" aria-label="Reading room sections" class="tint-surface flex w-full flex-wrap items-center gap-1 rounded-2xl border p-1 sm:w-auto sm:rounded-full sm:p-0.5">
+          <button
+            type="button"
+            role="tab"
+            aria-selected="true"
+            data-view="shelf"
+            class="view-nav-btn btn-accent min-h-[34px] flex-1 rounded-full px-3 text-[11px] font-medium sm:flex-initial sm:text-xs"
+          >
+            Catalog Shelf
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected="false"
+            data-view="path"
+            class="view-nav-btn min-h-[34px] flex-1 rounded-full px-3 text-[11px] font-medium text-muted hover:text-main sm:flex-initial sm:text-xs"
+          >
+            Reading Path &amp; Lookup
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected="false"
+            data-view="pace"
+            class="view-nav-btn min-h-[34px] flex-1 rounded-full px-3 text-[11px] font-medium text-muted hover:text-main sm:flex-initial sm:text-xs"
+          >
+            Reading Pace
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected="false"
+            data-view="colophon"
+            class="view-nav-btn min-h-[34px] flex-1 rounded-full px-3 text-[11px] font-medium text-muted hover:text-main sm:flex-initial sm:text-xs"
+          >
+            About / Colophon
+          </button>
+        </div>
+
+        <!-- Desktop Ambiance Switcher -->
+        <div role="group" aria-label="Reading atmosphere" class="tint-surface hidden shrink-0 items-center rounded-full border p-0.5 lg:inline-flex">
+          <button type="button" data-ambiance="paper" aria-pressed="true" class="ambiance-btn btn-accent min-h-[34px] rounded-full px-3 text-xs font-medium">Paper</button>
+          <button type="button" data-ambiance="dusk" aria-pressed="false" class="ambiance-btn min-h-[34px] rounded-full px-3 text-xs font-medium text-muted hover:text-main">Dusk</button>
+          <button type="button" data-ambiance="lamp" aria-pressed="false" class="ambiance-btn min-h-[34px] rounded-full px-3 text-xs font-medium text-muted hover:text-main">Lamp</button>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main id="top" class="mx-auto max-w-6xl overflow-x-clip px-4 pt-7 pb-14 sm:px-8 sm:pt-10 sm:pb-20 lg:pt-12">
+
+    <!-- Quiet Introvert Reading Sanctuary Header -->
+    <section class="border-soft border-b pb-7 sm:pb-9 lg:pb-10">
+      <div class="max-w-3xl">
+        <p class="text-[11px] font-medium tracking-[0.16em] text-accent uppercase sm:text-xs">
+          Quiet Introvert Sanctuary • Low-Glare Study • A1–A2+ Series
+        </p>
+        <h1 class="mt-2.5 font-serif text-2xl font-normal leading-snug tracking-tight text-main sm:text-4xl sm:leading-tight lg:text-[2.55rem]">
+          A calm reading room for <em>The Present Simple</em> series.
+        </h1>
+        <p class="mt-3 text-sm leading-relaxed text-muted sm:text-base">
+          Eight volumes published under Arkiv—four core textbooks, two vocabulary companions, and two 300-mark examinations. Keep quiet shelf marks, trace reading paths, look up chapters and words, or read excerpts at an unhurried pace.
+        </p>
+
+        <!-- Quiet Summary Line & Bookmark Counter -->
+        <div class="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-muted sm:text-sm">
+          <span><strong class="font-medium text-main">8</strong> Volumes</span>
+          <span aria-hidden="true">•</span>
+          <span><strong class="font-medium text-main">135</strong> Story Chapters (Editions 1–3)</span>
+          <span aria-hidden="true">•</span>
+          <span><strong class="font-medium text-main">300</strong> Marks Per Exam</span>
+          <span aria-hidden="true">•</span>
+          <span id="quietShelfSummary" class="font-medium text-accent">0 marked • 0 bookmarked</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 1: CATALOG SHELF VIEW -->
+    <section id="shelfViewSection" aria-label="Catalog shelf" class="pt-7 sm:pt-8">
+      <!-- Filter Pills + Search + Sort Controls -->
+      <div class="flex flex-col gap-3.5 lg:flex-row lg:items-center lg:justify-between">
+        <div role="tablist" aria-label="Filter volumes by category" class="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            role="tab"
+            aria-selected="true"
+            data-filter="all"
+            class="filter-tab btn-accent min-h-[38px] rounded-full px-3.5 py-1.5 text-xs font-medium sm:px-4 sm:text-sm"
+          >
+            All (8)
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected="false"
+            data-filter="textbooks"
+            class="filter-tab book-sheet min-h-[38px] rounded-full px-3.5 py-1.5 text-xs font-medium text-muted hover:text-main sm:px-4 sm:text-sm"
+          >
+            Textbooks (4)
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected="false"
+            data-filter="vocabulary"
+            class="filter-tab book-sheet min-h-[38px] rounded-full px-3.5 py-1.5 text-xs font-medium text-muted hover:text-main sm:px-4 sm:text-sm"
+          >
+            Vocabulary (2)
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected="false"
+            data-filter="exams"
+            class="filter-tab book-sheet min-h-[38px] rounded-full px-3.5 py-1.5 text-xs font-medium text-muted hover:text-main sm:px-4 sm:text-sm"
+          >
+            Exams (2)
+          </button>
+        </div>
+
+        <!-- Search Input & Sort Select -->
+        <div class="grid w-full grid-cols-1 gap-2.5 sm:grid-cols-[minmax(0,1fr)_auto] lg:w-auto lg:grid-cols-[16rem_auto]">
+          <div class="relative min-w-0">
+            <label for="volumeSearch" class="sr-only">Search volumes by title, level, or topic</label>
+            <svg class="pointer-events-none absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+              <circle cx="11" cy="11" r="7" />
+              <path d="M21 21l-4.35-4.35" />
+            </svg>
+            <input
+              id="volumeSearch"
+              type="search"
+              placeholder="Search title, chapters, or topic..."
+              class="book-sheet min-h-[40px] w-full min-w-0 rounded-full py-2 pr-9 pl-9 text-sm text-main placeholder:opacity-70 focus:border-[#476053] focus:outline-none"
+            />
+            <button
+              id="clearSearchBtn"
+              type="button"
+              aria-label="Clear search"
+              class="hidden absolute top-1/2 right-2.5 -translate-y-1/2 rounded-full p-1.5 text-muted hover:text-main"
+            >
+              <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M18 6L6 18" />
+                <path d="M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          <div class="flex min-w-0 items-center gap-2">
+            <label for="volumeSort" class="shrink-0 text-xs font-medium text-muted">Sort:</label>
+            <select
+              id="volumeSort"
+              class="book-sheet min-h-[40px] w-full min-w-0 rounded-full px-3.5 py-2 text-xs font-medium text-main focus:border-[#476053] focus:outline-none sm:w-auto sm:text-sm"
+            >
+              <option value="series">Series Order (01–08)</option>
+              <option value="title-asc">Title (A–Z)</option>
+              <option value="category">Category Group</option>
+              <option value="bookmarked">Bookmarked First</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <p id="catalogStatus" class="mt-4 text-xs text-muted">Showing 8 of 8 in all volumes</p>
+
+      <!-- Fluid Responsive Book Grid -->
+      <div id="volumeGrid" class="mt-5 grid grid-cols-1 gap-5 sm:gap-6 md:grid-cols-2">
+        <!-- Rendered by JavaScript -->
+      </div>
+
+      <!-- Empty State -->
+      <div id="emptyState" class="book-sheet mt-8 hidden p-7 text-center sm:p-10">
+        <p class="font-serif text-xl text-main">No volume matches your filter.</p>
+        <p class="mt-1.5 text-sm text-muted">Try searching for "First Edition", "50 chapters", "135 chapters", or "300".</p>
+        <button
+          id="resetAllBtn"
+          type="button"
+          class="btn-accent mt-5 min-h-[38px] rounded-full px-4 py-2 text-xs font-medium"
+        >
+          Reset Filters
+        </button>
+      </div>
+    </section>
+
+    <!-- VIEW 2: READING PATH, EDITION COMPARISON & CHAPTER/VOCABULARY LOOKUP -->
+    <section id="pathViewSection" aria-label="Reading path, comparison, and lookup" class="hidden space-y-8 pt-7 sm:space-y-10 sm:pt-8">
+
+      <!-- 1. Interactive Reading Path Selector -->
+      <div class="book-sheet p-5 sm:p-7">
+        <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <p class="text-[11px] font-medium tracking-[0.14em] text-accent uppercase">Suggested Reading Path</p>
+            <h2 class="mt-1 border-0 pb-0 font-serif text-2xl font-normal tracking-normal text-main normal-case">
+              Choose a quiet sequence that fits your study style
+            </h2>
+          </div>
+
+          <div role="group" aria-label="Reading path order" class="tint-surface flex flex-wrap items-center gap-1 rounded-2xl border p-1 sm:rounded-full sm:p-0.5">
+            <button type="button" data-path="story" class="path-btn btn-accent min-h-[36px] flex-1 rounded-full px-3.5 text-xs font-medium sm:flex-initial">
+              Story First
+            </button>
+            <button type="button" data-path="vocab" class="path-btn min-h-[36px] flex-1 rounded-full px-3.5 text-xs font-medium text-muted hover:text-main sm:flex-initial">
+              Vocabulary First
+            </button>
+            <button type="button" data-path="exam" class="path-btn min-h-[36px] flex-1 rounded-full px-3.5 text-xs font-medium text-muted hover:text-main sm:flex-initial">
+              Exam Prep First
+            </button>
+          </div>
+        </div>
+
+        <p id="pathIntroNote" class="mt-3 text-sm leading-relaxed text-muted"></p>
+
+        <ol id="pathStepsList" class="mt-5 grid grid-cols-1 gap-3.5 md:grid-cols-2">
+          <!-- Rendered by JavaScript -->
+        </ol>
+      </div>
+
+      <!-- 2. Chapter & Vocabulary Cross-Search (Quick Chapter & Word Lookup) -->
+      <div class="book-sheet p-5 sm:p-7">
+        <p class="text-[11px] font-medium tracking-[0.14em] text-accent uppercase">Quick Chapter &amp; Word Lookup</p>
+        <h2 class="mt-1 border-0 pb-0 font-serif text-2xl font-normal tracking-normal text-main normal-case">
+          Search across chapters, editions, and series vocabulary
+        </h2>
+        <p class="mt-1.5 text-sm text-muted">
+          Look up sample chapter titles (such as <em>"A Boy Who Loves Programming"</em>, <em>"The Student Who Builds Apps"</em>, <em>"The Archive Assistant"</em>, or <em>"The Last Train Home"</em>) or vocabulary words and definitions (such as <em>"archive"</em>, <em>"routine"</em>, <em>"debug"</em>, or <em>"schedule"</em>).
+        </p>
+
+        <div class="mt-4 flex flex-col gap-2.5 sm:flex-row sm:items-center">
+          <div class="relative min-w-0 flex-1">
+            <label for="crossLookupInput" class="sr-only">Search chapters and vocabulary words</label>
+            <input
+              id="crossLookupInput"
+              type="search"
+              placeholder="Try 'archive', 'routine', 'debug', or 'The Student Who Builds Apps'..."
+              class="room-surface min-h-[42px] w-full min-w-0 rounded-full border px-4 py-2 text-sm text-main placeholder:opacity-70 focus:border-[#476053] focus:outline-none"
+            />
+          </div>
+          <div class="flex flex-wrap items-center gap-1.5">
+            <button type="button" data-quick-term="archive" class="quick-term-btn tint-surface min-h-[34px] rounded-full border px-3 text-xs text-muted hover:text-main">archive</button>
+            <button type="button" data-quick-term="routine" class="quick-term-btn tint-surface min-h-[34px] rounded-full border px-3 text-xs text-muted hover:text-main">routine</button>
+            <button type="button" data-quick-term="debug" class="quick-term-btn tint-surface min-h-[34px] rounded-full border px-3 text-xs text-muted hover:text-main">debug</button>
+            <button type="button" data-quick-term="schedule" class="quick-term-btn tint-surface min-h-[34px] rounded-full border px-3 text-xs text-muted hover:text-main">schedule</button>
+          </div>
+        </div>
+
+        <p id="crossLookupCount" class="mt-3.5 text-xs text-muted"></p>
+        <div id="crossLookupResults" class="mt-4 grid grid-cols-1 gap-3.5 md:grid-cols-2">
+          <!-- Rendered by JavaScript -->
+        </div>
+      </div>
+
+      <!-- 3. Series Edition Comparison Overview -->
+      <div class="book-sheet p-5 sm:p-7">
+        <p class="text-[11px] font-medium tracking-[0.14em] text-accent uppercase">Series Edition Comparison</p>
+        <h2 class="mt-1 border-0 pb-0 font-serif text-2xl font-normal tracking-normal text-main normal-case">
+          Format, chapters or items, and level across all eight volumes
+        </h2>
+
+        <div class="quiet-scroll mt-4 overflow-x-auto rounded-xl border border-soft">
+          <table class="w-full min-w-[600px] border-collapse text-left text-xs sm:text-sm">
+            <thead>
+              <tr class="tint-surface border-b border-soft text-main">
+                <th class="px-3.5 py-2.5 font-medium">Volume</th>
+                <th class="px-3.5 py-2.5 font-medium">Format</th>
+                <th class="px-3.5 py-2.5 font-medium">Chapters / Items</th>
+                <th class="px-3.5 py-2.5 font-medium">Level</th>
+                <th class="px-3.5 py-2.5 font-medium">PDF Link</th>
+              </tr>
+            </thead>
+            <tbody id="comparisonTableBody" class="divide-y divide-[var(--border-soft)]">
+              <!-- Rendered by JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 3: QUIET READING PACE MODE VIEW -->
+    <section id="paceViewSection" aria-label="Quiet reading pace mode" class="hidden pt-7 sm:pt-8">
+      <div class="book-sheet overflow-hidden">
+        <!-- Toolbar -->
+        <div class="tint-surface flex flex-col gap-3 border-b px-4 py-3.5 text-xs text-muted sm:px-7 lg:flex-row lg:items-center lg:justify-between">
+          <div class="flex min-w-0 flex-1 items-center gap-2">
+            <label for="paceVolumeSelect" class="shrink-0 font-medium text-main">Volume:</label>
+            <select
+              id="paceVolumeSelect"
+              class="room-surface min-h-[36px] w-full min-w-0 truncate rounded-full border px-3.5 py-1.5 text-xs text-main focus:border-[#476053] focus:outline-none sm:max-w-md"
+            ></select>
+          </div>
+
+          <div class="flex flex-wrap items-center justify-between gap-2 sm:justify-start sm:gap-3">
+            <!-- Line Height -->
+            <div class="room-surface inline-flex items-center gap-0.5 rounded-full border p-0.5" role="group" aria-label="Line height">
+              <button type="button" data-leading="1.65" class="pace-leading-btn min-h-[32px] rounded-full px-2.5 py-1 text-[11px] text-muted hover:text-main">Relaxed</button>
+              <button type="button" data-leading="1.92" class="pace-leading-btn btn-accent min-h-[32px] rounded-full px-2.5 py-1 text-[11px] font-medium">Airy</button>
+              <button type="button" data-leading="2.18" class="pace-leading-btn min-h-[32px] rounded-full px-2.5 py-1 text-[11px] text-muted hover:text-main">Slow</button>
+            </div>
+
+            <!-- Column Width -->
+            <div class="room-surface inline-flex items-center gap-0.5 rounded-full border p-0.5" role="group" aria-label="Column width">
+              <button type="button" data-measure="54ch" class="pace-measure-btn btn-accent min-h-[32px] rounded-full px-2.5 py-1 text-[11px] font-medium">Narrow</button>
+              <button type="button" data-measure="66ch" class="pace-measure-btn min-h-[32px] rounded-full px-2.5 py-1 text-[11px] text-muted hover:text-main">Wide</button>
+            </div>
+          </div>
+
+          <!-- Gentle Session Timer -->
+          <div class="flex items-center justify-between gap-2.5 sm:justify-start">
+            <span id="paceTimerDisplay" class="font-mono text-xs text-main">00:00</span>
+            <div class="flex items-center gap-1.5">
+              <button
+                id="paceToggleTimerBtn"
+                type="button"
+                class="min-h-[32px] rounded-full border border-soft px-3 py-1 text-[11px] font-medium text-accent transition hover:text-main"
+              >
+                Start Session
+              </button>
+              <button
+                id="paceResetTimerBtn"
+                type="button"
+                class="min-h-[32px] rounded-full px-2.5 py-1 text-[11px] text-muted transition hover:text-main"
+              >
+                Reset
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reading Surface -->
+        <div class="px-4 py-7 sm:px-8 sm:py-10">
+          <div id="paceMeasureContainer" class="mx-auto w-full" style="max-width: 54ch;">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <p id="paceEyebrow" class="text-[11px] font-medium tracking-[0.12em] text-accent uppercase"></p>
+              <span id="paceLevelBadge" class="tint-surface rounded-full border px-2.5 py-0.5 text-[11px] font-medium text-muted"></span>
+            </div>
+
+            <h2 id="paceHeading" class="mt-2.5 border-0 pb-0 font-serif text-2xl font-normal tracking-normal text-main normal-case sm:text-3xl"></h2>
+            <p id="paceSubheading" class="mt-1.5 text-xs leading-relaxed text-muted sm:text-sm"></p>
+
+            <hr class="border-soft my-6" />
+
+            <div id="paceProse" class="reading-prose text-base sm:text-lg" style="line-height: 1.92;"></div>
+
+            <div class="tint-surface mt-8 flex flex-col gap-3 rounded-2xl border p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
+              <div class="min-w-0 text-xs text-muted">
+                <p id="paceVolumeTitle" class="font-medium text-main"></p>
+                <p id="paceVolumeMeta" class="mt-0.5 leading-relaxed"></p>
+              </div>
+              <div class="flex shrink-0 flex-wrap items-center gap-2">
+                <button
+                  id="paceInspectBtn"
+                  type="button"
+                  class="room-surface min-h-[36px] rounded-full border px-3.5 py-1.5 text-xs font-medium text-main hover:text-accent"
+                >
+                  Volume Details
+                </button>
+                <a
+                  id="paceDriveLink"
+                  href="#"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="btn-accent inline-flex min-h-[36px] items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-medium"
+                >
+                  <span>Open PDF</span>
+                  <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path d="M7 17L17 7" />
+                    <path d="M8 7h9v9" />
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reading Time & Progress Footer -->
+        <div class="tint-surface border-t px-4 py-3 sm:px-7">
+          <div class="flex flex-wrap items-center justify-between gap-1 text-[11px] text-muted sm:text-xs">
+            <span id="paceWordEstimate">0 words • ~0 min calm reading time</span>
+            <span id="paceSessionStatus">Session guide: 0s (0%)</span>
+          </div>
+          <div class="room-surface mt-2 h-1.5 w-full overflow-hidden rounded-full border">
+            <div id="paceBarFill" class="h-full w-0 rounded-full transition-all duration-500" style="background-color: var(--accent-ink);"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 4: ABOUT ARKIV / IMPRINT & COLOPHON VIEW -->
+    <section id="colophonViewSection" aria-label="About Arkiv and colophon" class="hidden space-y-6 pt-7 sm:space-y-8 sm:pt-8">
+      <div class="book-sheet p-5 sm:p-8">
+        <p class="text-[11px] font-medium tracking-[0.14em] text-accent uppercase">Imprint &amp; Colophon • About Arkiv</p>
+        <h2 class="mt-1.5 border-0 pb-0 font-serif text-2xl font-normal tracking-normal text-main normal-case sm:text-3xl">
+          Unhurried study, quiet structure, and enduring practice.
+        </h2>
+        <p class="mt-3 max-w-3xl text-sm leading-relaxed text-main/90 sm:text-base">
+          Arkiv publishes calm, self-paced learning materials and digital tools for readers who prefer depth over noise. <em>The Present Simple</em> series is built around everyday situations—programming, archives, workshops, neighborhoods, science, and personal routines—so grammar is noticed and used naturally.
+        </p>
+
+        <div class="mt-6 grid grid-cols-1 gap-4 md:grid-cols-3">
+          <div class="tint-surface rounded-2xl border p-4 sm:p-5">
+            <h3 class="font-serif text-lg font-normal text-main">Calm Reading Philosophy</h3>
+            <p class="mt-2 text-xs leading-relaxed text-muted sm:text-sm">
+              Low-glare atmospheres, generous line spacing, and private shelf marks without leaderboards, timers-as-pressure, or visual clutter.
+            </p>
+          </div>
+          <div class="tint-surface rounded-2xl border p-4 sm:p-5">
+            <h3 class="font-serif text-lg font-normal text-main">8-Volume Catalog Summary</h3>
+            <p class="mt-2 text-xs leading-relaxed text-muted sm:text-sm">
+              Four textbooks (35, 50, and 50 story chapters plus the Final Capstone), two vocabulary companions, and two 300-mark examination papers.
+            </p>
+          </div>
+          <div class="tint-surface rounded-2xl border p-4 sm:p-5">
+            <h3 class="font-serif text-lg font-normal text-main">Series Roadmap</h3>
+            <p class="mt-2 text-xs leading-relaxed text-muted sm:text-sm">
+              Having completed the A1–A2+ Present Simple series and capstone assessments, upcoming Arkiv releases explore new tenses, dialogue formats, and companion tools.
+            </p>
+          </div>
+        </div>
+
+        <div class="border-soft mt-6 flex flex-wrap items-center justify-between gap-3 border-t pt-5 text-xs text-muted sm:text-sm">
+          <div>
+            <strong class="font-medium text-main">Colophon:</strong> Composed in Newsreader &amp; Inter • Stored in Google Drive • Shelf marks saved locally in your browser.
+          </div>
+          <a
+            href="https://drive.google.com/drive/folders/1VH1gdoXY2IyGbTgj1F-5gdFFuCcIE2EA"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn-accent inline-flex min-h-[38px] items-center gap-1.5 rounded-full px-4 py-2 text-xs font-medium"
+          >
+            <span>Open Arkiv Folder</span>
+            <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M7 17L17 7" />
+              <path d="M8 7h9v9" />
+            </svg>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quiet Footer -->
+    <footer class="border-soft mt-14 flex flex-col justify-between gap-3 border-t pt-7 text-xs text-muted sm:mt-16 sm:flex-row sm:items-center sm:pt-8">
+      <p>
+        <span class="font-serif text-sm text-main">Arkiv</span> • The Present Simple Educational Series
+      </p>
+      <a
+        href="https://drive.google.com/drive/folders/1VH1gdoXY2IyGbTgj1F-5gdFFuCcIE2EA"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-flex min-h-[36px] items-center gap-1 font-medium text-accent underline-offset-4 hover:underline"
+      >
+        <span>Arkiv Series Folder on Google Drive</span>
+        <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M7 17L17 7" />
+          <path d="M8 7h9v9" />
+        </svg>
+      </a>
+    </footer>
+  </main>
+
+  <!-- Accessible Volume Detail Modal -->
+  <div
+    id="detailModal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="modalTitle"
+    class="fixed inset-0 z-50 hidden items-end justify-center p-0 backdrop-blur-[2px] sm:items-center sm:p-6"
+    style="background-color: var(--overlay-room);"
+  >
+    <div class="book-sheet flex max-h-[92vh] w-full max-w-2xl flex-col overflow-hidden rounded-t-[20px] sm:max-h-[88vh] sm:rounded-[20px]">
+      <!-- Modal Header -->
+      <div class="tint-surface flex items-start justify-between gap-3 border-b px-4 py-4 sm:px-6">
+        <div class="min-w-0">
+          <p id="modalEyebrow" class="truncate text-[10px] font-medium tracking-[0.14em] text-accent uppercase sm:text-[11px]"></p>
+          <h2 id="modalTitle" class="mt-1 border-0 pb-0 font-serif text-xl font-normal tracking-normal text-main normal-case sm:text-2xl"></h2>
+          <p id="modalSubtitle" class="mt-0.5 text-xs text-muted"></p>
+        </div>
+        <button
+          id="closeModalBtn"
+          type="button"
+          aria-label="Close volume details"
+          class="room-surface flex min-h-[36px] min-w-[36px] shrink-0 items-center justify-center rounded-full border p-2 text-muted hover:text-main"
+        >
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M18 6L6 18" />
+            <path d="M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Modal Scrollable Body -->
+      <div class="quiet-scroll flex-1 overflow-y-auto px-4 py-5 sm:px-6 sm:py-6">
+        <div class="grid grid-cols-1 gap-2.5 rounded-xl border border-soft p-3.5 text-xs sm:grid-cols-2" style="background-color: var(--spine-tint);">
+          <div>
+            <span class="block text-[10px] tracking-wider text-muted uppercase">Level &amp; File</span>
+            <span id="modalLevel" class="mt-0.5 block font-medium text-main"></span>
+          </div>
+          <div>
+            <span class="block text-[10px] tracking-wider text-muted uppercase">Scope &amp; Structure</span>
+            <span id="modalScope" class="mt-0.5 block font-medium text-main"></span>
+          </div>
+        </div>
+
+        <p id="modalDescription" class="mt-4 text-sm leading-relaxed text-main/90"></p>
+
+        <!-- Quiet Shelf Mark & Bookmark inside Modal -->
+        <div class="tint-surface mt-4 flex flex-wrap items-center justify-between gap-2.5 rounded-xl border p-3 text-xs">
+          <div class="flex flex-wrap items-center gap-2">
+            <label for="modalStatusSelect" class="font-medium text-main">Shelf mark:</label>
+            <select id="modalStatusSelect" class="room-surface min-h-[32px] rounded-full border px-3 text-xs text-main focus:outline-none">
+              <option value="unread">Unread</option>
+              <option value="reading">Currently reading</option>
+              <option value="completed">Completed</option>
+            </select>
+          </div>
+          <button
+            id="modalBookmarkBtn"
+            type="button"
+            class="room-surface min-h-[32px] rounded-full border px-3 text-xs font-medium text-muted hover:text-main"
+          >
+            Bookmark
+          </button>
+        </div>
+
+        <div class="mt-6 border-t border-soft pt-5">
+          <p id="modalSampleLabel" class="text-[11px] font-medium tracking-[0.12em] text-accent uppercase"></p>
+          <h3 id="modalSampleHeading" class="mt-1 font-serif text-xl font-normal text-main"></h3>
+          <div id="modalSampleBody" class="reading-prose mt-3 text-sm sm:text-base" style="line-height: 1.85;"></div>
+        </div>
+      </div>
+
+      <!-- Wrap-Safe Modal Footer -->
+      <div class="tint-surface flex flex-wrap items-center justify-between gap-2.5 border-t px-4 py-3.5 sm:px-6">
+        <div class="flex flex-wrap items-center gap-2">
+          <button
+            id="modalReadBookBtn"
+            type="button"
+            class="btn-accent inline-flex min-h-[38px] items-center gap-1.5 rounded-full px-4 py-2 text-xs font-medium sm:text-sm shadow-sm transition-transform active:scale-95"
+          >
+            <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+            </svg>
+            <span>Read Book</span>
+          </button>
+          <button
+            id="modalReadPaceBtn"
+            type="button"
+            class="room-surface min-h-[38px] rounded-full border px-4 py-2 text-xs font-medium text-main hover:text-accent sm:text-sm"
+          >
+            Pace Excerpt
+          </button>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+          <button
+            id="modalDoneBtn"
+            type="button"
+            class="room-surface min-h-[38px] rounded-full border px-3.5 py-2 text-xs font-medium text-muted hover:text-main sm:text-sm"
+          >
+            Close
+          </button>
+          <a
+            id="modalDriveBtn"
+            href="#"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="room-surface inline-flex min-h-[38px] items-center gap-1.5 rounded-full border px-4 py-2 text-xs font-medium text-muted hover:text-main sm:text-sm"
+            title="Open in Google Drive"
+          >
+            <span>Drive</span>
+            <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+              <polyline points="15 3 21 3 21 9" />
+              <line x1="10" y1="14" x2="21" y2="3" />
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- In-Site Animated Book Reader Modal -->
+  <div
+    id="bookReaderModal"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Book Reader"
+    class="fixed inset-0 z-[60] hidden items-center justify-center p-2 sm:p-6 backdrop-blur-sm transition-opacity duration-300 opacity-0"
+    style="background-color: var(--overlay-room);"
+  >
+    <div class="perspective-container w-full h-full flex items-center justify-center overflow-hidden">
+      
+      <div id="bookSpreadWrapper" class="book-spread-wrapper closed">
+        
+        <!-- Left Cover (Hinges on left and flips open 180deg) -->
+        <div id="bookCover3D" class="book-cover-3d">
+          <!-- Front Cover Face -->
+          <div class="book-front-face flex flex-col items-center justify-center p-6 text-center">
+            <p id="readerCoverEyebrow" class="text-xs font-medium tracking-[0.16em] text-accent uppercase"></p>
+            <h2 id="readerCoverTitle" class="mt-4 font-serif text-3xl sm:text-4xl font-normal text-main text-balance leading-tight"></h2>
+            <p id="readerCoverSubtitle" class="mt-4 text-sm sm:text-base text-muted max-w-md mx-auto"></p>
+            <div class="mt-10 animate-pulse text-muted">
+              <svg class="h-6 w-6 mx-auto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+              </svg>
+              <p class="mt-2 text-[10px] uppercase tracking-widest">Opening Volume...</p>
+            </div>
+          </div>
+          <!-- Inside Front Cover Face (Becomes Left Page) -->
+          <div class="book-back-face flex items-center justify-center">
+            <div class="animate-pulse flex flex-col items-center opacity-40">
+              <span class="text-xs text-muted tracking-widest uppercase">Loading Pages...</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Page (Rests underneath cover) -->
+        <div class="book-right-page flex items-center justify-center">
+          <div class="animate-pulse flex flex-col items-center opacity-40">
+            <span class="text-xs text-muted tracking-widest uppercase">Loading Pages...</span>
+          </div>
+        </div>
+
+        <!-- 2-Page Spread Iframe Overlay (Fades in covering both sides) -->
+        <div id="iframeSpreadOverlay" class="iframe-spread-overlay flex flex-col">
+          <!-- Toolbar -->
+          <div class="tint-surface flex items-center justify-between gap-3 border-b border-soft px-4 py-3 sm:px-6 shrink-0 z-50 relative">
+            <div class="min-w-0 flex items-center gap-3">
+              <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border bg-[var(--bg-sheet)] text-accent shadow-sm">
+                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+              </span>
+              <div class="min-w-0">
+                <p id="readerToolbarTitle" class="truncate font-serif text-lg font-medium text-main"></p>
+              </div>
+            </div>
+            <button
+              id="closeReaderBtn"
+              type="button"
+              aria-label="Close reader"
+              class="room-surface flex min-h-[36px] min-w-[36px] shrink-0 items-center justify-center rounded-full border border-soft p-2 text-muted hover:text-main hover:border-hover transition"
+            >
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>
+            </button>
+          </div>
+          <!-- Iframe wrapper with spine gutter shadow -->
+          <div class="flex-1 w-full relative bg-[var(--bg-room)]">
+            <div class="book-gutter"></div>
+            <div id="readerLoadingSpinner" class="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <div class="animate-spin rounded-full h-8 w-8 border-2 border-[var(--border-soft)] border-t-[var(--accent-ink)]"></div>
+            </div>
+            <iframe id="pdfIframe" class="relative z-10 w-full h-full border-0" allow="autoplay" allowfullscreen></iframe>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'arkiv_quiet_shelf_v1';
+
+    const volumes = [
+      {
+        id: 'first-edition',
+        number: '01',
+        category: 'textbooks',
+        categoryLabel: 'Textbook',
+        title: 'The Present Simple: First Edition',
+        shortTitle: 'First Edition',
+        fileName: 'First_Edition.pdf',
+        level: 'A1–A2',
+        levelFull: 'Elementary to Pre-Intermediate (A1–A2)',
+        formatLabel: 'Story & Grammar Textbook',
+        countLabel: '35 chapters',
+        scope: '35 chapters, A1–A2 • Grammar Reference, Final Practice Examination & Answer Key',
+        driveUrl: 'https://drive.google.com/file/d/1S7wBiC-OICz7QxlQI9fkx8UohQ2bJ-6V/view?usp=drivesdk',
+        summary: 'Thirty-five story-driven chapters covering daily routines, study habits, grammar reference, final practice examination, and answer key.',
+        description: 'A Complete English Practice Textbook for elementary to pre-intermediate learners (A1–A2). Includes 35 reading chapters with grammar focus, vocabulary, comprehension, writing, and speaking practice, plus a grammar reference, final practice examination, and answer key.',
+        sampleLabel: 'Chapter 01 Excerpt — A Boy Who Loves Programming',
+        sampleHeading: 'A Boy Who Loves Programming',
+        sampleSubheading: 'Nathaniel Carter builds steady coding and note-taking habits in the Present Simple.',
+        chapters: [
+          { ref: 'Chapter 01', title: 'A Boy Who Loves Programming', focus: 'Daily activities, Python & notebooks' },
+          { ref: 'Chapter 02', title: 'My Everyday Routine', focus: 'Daily routines and time expressions' },
+          { ref: 'Chapter 07', title: 'Technology in Everyday Life', focus: 'Technology, tools & accuracy' },
+          { ref: 'Chapter 18', title: 'A Hardworking Developer', focus: 'Software testing, errors & logical thinking' }
+        ],
+        paragraphs: [
+          'Nathaniel Carter is a seventeen-year-old student. He lives with his family in a quiet neighborhood. He studies at a local school, but his favorite subject is computer science.',
+          'Nathaniel loves programming. He spends his free time learning different programming languages. He usually watches tutorials, reads technical articles, and practices coding on his laptop.',
+          'His favorite language is Python because it looks simple and solves many problems. He also studies HTML, CSS, and JavaScript. He does not understand every concept immediately, but he never gives up easily.',
+          'Nathaniel keeps a small notebook. He writes new programming terms and useful ideas in it. Every evening, he reviews his notes and works on small projects.'
+        ]
+      },
+      {
+        id: 'second-edition',
+        number: '02',
+        category: 'textbooks',
+        categoryLabel: 'Textbook',
+        title: 'The Present Simple: Second Edition',
+        shortTitle: 'Second Edition',
+        fileName: 'Second_Edition.pdf',
+        level: 'A1–A2+',
+        levelFull: 'Elementary to Pre-Intermediate (A1–A2+)',
+        formatLabel: 'Original Story Textbook',
+        countLabel: '50 chapters',
+        scope: '50 chapters, A1–A2+ • Reading, Grammar, Vocabulary, Writing, Speaking & Progress Tests',
+        driveUrl: 'https://drive.google.com/file/d/1jvDOrhLrTc_eJHyz0n_QvpI5VfnrQrDF/view?usp=drivesdk',
+        summary: 'Fifty original chapters with new characters, workplaces, and community routines, plus grammar notes, progress tests, and answer key.',
+        description: 'A fresh collection of 50 original chapters written specifically for the Second Edition rather than repeating the First Edition. Covers everyday schedules, repair and bookbinding workshops, public services, and neighborhood life with grammar checks, progress tests, and answer key.',
+        sampleLabel: 'Chapter 01 & 02 Excerpt — The Last Train Home & A Room Above the Bakery',
+        sampleHeading: 'The Last Train Home & A Room Above the Bakery',
+        sampleSubheading: 'Everyday schedules, quiet workspaces, and calm decisions in the Present Simple.',
+        chapters: [
+          { ref: 'Chapter 01', title: 'The Last Train Home', focus: 'Transport schedules, delays & calm decisions' },
+          { ref: 'Chapter 02', title: 'A Room Above the Bakery', focus: 'Neighborhood life & reliable routines' },
+          { ref: 'Chapter 24', title: 'The Local History Podcast', focus: 'Archives, interviews & community records' },
+          { ref: 'Chapter 30', title: 'The Bookbinding Studio', focus: 'Crafts, covers, folders & repairs' }
+        ],
+        paragraphs: [
+          'At the end of each school day, Adrian Vale takes the 5:20 train home. He knows the station well: the bakery stands beside the ticket office, and the old clock runs three minutes fast.',
+          'Clara Whitlock rents a small room above a bakery on Linden Street. The room has one wide window, a narrow desk, and shelves that reach the ceiling. Every morning, the smell of warm bread enters through the open window.',
+          'Clara works as a translator, so she needs a quiet place and a reliable internet connection. The bakery downstairs opens at six, but Clara starts work at eight.'
+        ]
+      },
+      {
+        id: 'third-edition',
+        number: '03',
+        category: 'textbooks',
+        categoryLabel: 'Textbook',
+        title: 'The Present Simple: Third Edition',
+        shortTitle: 'Third Edition',
+        fileName: 'Third_Edition.pdf',
+        level: 'A1–A2+',
+        levelFull: 'Elementary to Pre-Intermediate (A1–A2+)',
+        formatLabel: 'Structured Practice Textbook',
+        countLabel: '50 chapters',
+        scope: '50 chapters, A1–A2+ • Reading Check, Grammar Practice, Writing, Speaking & Worksheets',
+        driveUrl: 'https://drive.google.com/file/d/17Jxrjz42OwIuzDPBrLDEju6SfdVA3bc7/view?usp=drivesdk',
+        summary: 'Fifty original chapters structured with Reading Check, Grammar Practice, Writing Task, and Speaking Task, plus worksheets and progress tests.',
+        description: 'Presents 50 original chapters across technology, education, work, science, culture, and daily routines. Every chapter includes Reading, Vocabulary, Reading Check, Grammar Practice, Writing Task, and Speaking Task, supported by grammar reference, skill-building worksheets, progress tests, and answer key.',
+        sampleLabel: 'Chapter 01 Excerpt — The Student Who Builds Apps',
+        sampleHeading: 'The Student Who Builds Apps',
+        sampleSubheading: 'Darius Venn writes small programs, debugs mistakes, and tests features step by step.',
+        chapters: [
+          { ref: 'Chapter 01', title: 'The Student Who Builds Apps', focus: 'Debugging, app features & steady practice' },
+          { ref: 'Chapter 03', title: 'The Quiet Power of a Routine', focus: 'Morning habits & calm schedules' },
+          { ref: 'Chapter 32', title: 'The Team That Runs a Website', focus: 'Task boards, layouts & testing links' },
+          { ref: 'Chapter 49', title: 'The Archive Assistant', focus: 'Catalogues, records & preservation' }
+        ],
+        paragraphs: [
+          'Every afternoon, Darius Venn returns from college and opens his laptop. He studies programming for one hour before dinner. He writes small programs, tests each feature, and records every mistake in a notebook.',
+          'His sister, Elowen, checks the instructions and suggests clearer words. Darius does not rush. He improves one part at a time.',
+          'On Saturdays, he shows his work to a youth coding group. The members ask questions, share ideas, and help one another. Darius learns that good programmers practise regularly and explain their work clearly.'
+        ]
+      },
+      {
+        id: 'final-edition',
+        number: '04',
+        category: 'textbooks',
+        categoryLabel: 'Capstone',
+        title: 'The Present Simple: Final Edition',
+        shortTitle: 'Final Edition',
+        fileName: 'Final_Edition.pdf',
+        level: 'A1–A2+',
+        levelFull: 'Mastery & Capstone (A1–A2+)',
+        formatLabel: 'Mastery & Series Capstone',
+        countLabel: '135-chapter capstone • 100 mock items',
+        scope: 'Mastery & Capstone • Error Clinic, Reading Labs, 100 Mock Items, Portfolios & Rubric',
+        driveUrl: 'https://drive.google.com/file/d/1EeZ9yVLOBTQo8nIRzTWj01gFceczJxWt/view?usp=drivesdk',
+        summary: 'Series capstone uniting patterns across 135 chapters and core vocabulary with an Error Clinic, Reading Labs, Mock Exams, and Portfolios.',
+        description: 'Concludes the series by integrating grammar, vocabulary, and skills across 135 chapters. Contains a Master Grammar & Error Clinic, four Integrated Reading & Vocabulary Labs, three Cumulative Mock Examinations (100 total items), structured Writing and Speaking Portfolios, and a complete Answer Key and Mastery Rubric.',
+        sampleLabel: 'Part II Synthesis Excerpt — Inside the Digital Archive Studio',
+        sampleHeading: 'Inside the Digital Archive Studio',
+        sampleSubheading: 'Curator Julian Mercer and his studio team preserve fragile documents and publish collections monthly.',
+        chapters: [
+          { ref: 'Part I', title: 'Master Grammar & Error Clinic', focus: 'Structural matrix & 15 common mistakes' },
+          { ref: 'Part II — Lab 1', title: 'Inside the Digital Archive Studio', focus: 'Catalogues, scanning & fragile manuscripts' },
+          { ref: 'Part II — Lab 2', title: 'The Coastal Weather & Rescue Network', focus: 'Instruments, visibility & safety routines' },
+          { ref: 'Part III', title: 'Cumulative Series Mock Examinations', focus: '100 items across 3 mock exams' }
+        ],
+        paragraphs: [
+          'Every weekday at eight thirty, curator Julian Mercer unlocks the municipal archive studio. His small team preserves fragile manuscripts, historical maps, and local photographs for public research. Julian does not rush the restoration process because old paper tears easily when moisture or heat changes.',
+          'First, an apprentice cleans each document with a soft brush and records its condition in a digital catalogue. Next, a technician scans the pages at high resolution and verifies that every label matches the original date and location.',
+          'The studio publishes new collections online once a month, so students and historians access reliable records from home. Julian believes careful preservation connects modern technology with community memory.'
+        ]
+      },
+      {
+        id: 'first-vocab',
+        number: '05',
+        category: 'vocabulary',
+        categoryLabel: 'Vocabulary',
+        title: 'Master Vocabulary & Practice Book',
+        shortTitle: 'Master Vocabulary Book',
+        fileName: 'First_Vocab.pdf',
+        level: 'A1–A2',
+        levelFull: 'Elementary to Pre-Intermediate (A1–A2)',
+        formatLabel: 'Verb Forms & Lexicon Guide',
+        countLabel: 'V1/V2/V3/V-ing • 100+ questions',
+        scope: 'V1/V2/V3/V-ing & 100+ questions • Master Verb List, Nouns/Adjectives & Grammar Rules',
+        driveUrl: 'https://drive.google.com/file/d/16-r3zbAA8N2SO9xhq80Ci48cAydoB8yA/view?usp=drivesdk',
+        summary: 'Master verb tables (V1, V2, V3, V-ing), noun and adjective reference lists, and 100+ practice questions with answer key and grammar rules.',
+        description: 'Extracts and organizes verbs with V1, V2, V3, and V-ing forms alongside nouns and adjectives from the series, reinforced by 100+ practice questions, an answer key, and grammar rule explanations.',
+        sampleLabel: 'Companion Overview — Verb Forms & Core Lexicon',
+        sampleHeading: 'Master Verb Forms & Everyday Lexicon',
+        sampleSubheading: 'Connecting V1, V2, V3, and V-ing verb forms with nouns and adjectives in context.',
+        chapters: [
+          { ref: 'Part I', title: 'Master Verb List (V1, V2, V3, V-ing)', focus: 'Base, past, participle & -ing forms' },
+          { ref: 'Part II', title: 'Master Noun & Adjective List', focus: 'Core series nouns, adjectives & meanings' },
+          { ref: 'Part III', title: '100+ Practice Questions', focus: 'Verb forms, word types, synonyms & grammar' }
+        ],
+        paragraphs: [
+          'Learning isolated words rarely builds lasting fluency. This volume organizes verbs from the series with their base (V1), past (V2), past participle (V3), and present participle (-ing) forms.',
+          'Part II gathers core nouns and adjectives—such as archive, budget, deadline, mechanism, and schedule—followed by 100+ practice questions and grammar explanations.'
+        ]
+      },
+      {
+        id: 'second-vocab',
+        number: '06',
+        category: 'vocabulary',
+        categoryLabel: 'Vocabulary',
+        title: 'Companion Vocabulary Book',
+        shortTitle: 'Companion Vocabulary Book',
+        fileName: 'Second_Vocab.pdf',
+        level: 'A1–A2',
+        levelFull: 'Elementary to Pre-Intermediate (A1–A2)',
+        formatLabel: 'Cross-Edition Vocabulary Index',
+        countLabel: '135 chapters index',
+        scope: '135 chapters index across Editions 1–3 • Chapter lists, A–Z Index & Practice',
+        driveUrl: 'https://drive.google.com/file/d/1OhyNI16PEHlxkXWWU7uglgYPgnbWYNyq/view?usp=drivesdk',
+        summary: 'Complete vocabulary reference and practice book across all 135 chapters in Editions 1, 2, and 3, with an A–Z index and answer key.',
+        description: 'Consolidates official vocabulary across all 135 chapters of the First Edition (35 chapters), Second Edition (50 chapters), and Third Edition (50 chapters), complete with chapter word lists, an alphabetical A–Z index showing edition and chapter references, and practice exercises.',
+        sampleLabel: 'Series Index Overview — 135 Chapters Consolidated',
+        sampleHeading: 'A Single Reference Across All 135 Chapters',
+        sampleSubheading: 'Trace every word back to its exact edition and chapter across Editions 1, 2, and 3.',
+        chapters: [
+          { ref: 'Part I', title: 'First Edition Vocabulary (Chapters 01–35)', focus: '35 chapters of core words' },
+          { ref: 'Part II', title: 'Second Edition Vocabulary (Chapters 01–50)', focus: '50 chapters of fresh words' },
+          { ref: 'Part III', title: 'Third Edition Vocabulary (Chapters 01–50)', focus: '50 chapters of structured words' },
+          { ref: 'Part IV', title: 'Alphabetical Vocabulary Index (A–Z)', focus: 'Edition & chapter lookup index' }
+        ],
+        paragraphs: [
+          'Designed to accompany The Present Simple textbooks, this companion volume brings together vocabulary from all 135 chapters across Editions 1, 2, and 3 into one calm reference.',
+          'Use the chapter sections while reading stories, or use the alphabetical A–Z index to see which edition and chapter introduces a specific word.'
+        ]
+      },
+      {
+        id: 'test-exam-1',
+        number: '07',
+        category: 'exams',
+        categoryLabel: 'Exam',
+        title: 'Master Examination (300 Marks)',
+        shortTitle: 'Master Examination',
+        fileName: 'TestExam(1)_300-Marks.pdf',
+        level: 'A1–A2+',
+        levelFull: 'Elementary to Pre-Intermediate (A1–A2+)',
+        formatLabel: 'Six-Format Examination Paper',
+        countLabel: '300 marks • 6 formats',
+        scope: '300 marks across 6 formats • Multiple Choice, Verb/Word Form, Initials, Exchanges & Dialogue',
+        driveUrl: 'https://drive.google.com/file/d/1KRqDsB-h07CpwIz9-M9MVZHXfOFr5aDB/view?usp=drivesdk',
+        summary: 'Comprehensive 300-mark series examination across six question formats testing grammar, verb/word forms, vocabulary, and dialogue.',
+        description: 'A 300-mark examination covering Present Simple grammar and vocabulary across six distinct formats: multiple choice, verb form, word form, initial-letter vocabulary, short exchanges, and extended dialogue completion, with an official answer key and grade bands.',
+        sampleLabel: 'Assessment Scope — 300 Marks Across 6 Formats',
+        sampleHeading: 'Multi-Format Mastery Evaluation',
+        sampleSubheading: 'Tests grammar accuracy, word forms, vocabulary recall, exchanges, and dialogue.',
+        chapters: [
+          { ref: 'Sections I–III', title: 'Multiple Choice, Verb Form & Word Form', focus: 'Agreement, tense forms & word building' },
+          { ref: 'Sections IV–VI', title: 'Initial-Letter, Exchanges & Dialogue', focus: 'Vocabulary recall & conversation' }
+        ],
+        paragraphs: [
+          'This 300-mark examination evaluates learners across six complementary formats so both accuracy and practical sentence completion are measured.',
+          'From third-person verb agreement and word forms to short exchanges and dialogue completion, each section reinforces patterns studied across the series.'
+        ]
+      },
+      {
+        id: 'test-exam-2',
+        number: '08',
+        category: 'exams',
+        categoryLabel: 'Exam',
+        title: '300-Question Multiple-Choice Exam',
+        shortTitle: '300-Q Multiple-Choice Exam',
+        fileName: 'TestExam(2)_300Marks.pdf',
+        level: 'A1–A2+',
+        levelFull: 'Elementary to Pre-Intermediate (A1–A2+)',
+        formatLabel: 'Single-Mark Multiple-Choice Exam',
+        countLabel: '300 × 1 = 300 marks',
+        scope: '300 x 1 = 300 marks • 300 multiple-choice questions & complete answer key',
+        driveUrl: 'https://drive.google.com/file/d/1hTGTKYs2UlAXNH4m0gdNorI0v3_Nj3jK/view?usp=drivesdk',
+        summary: 'Three hundred multiple-choice questions at 1 mark per item (300 x 1 = 300 marks) with complete answer key and score bands.',
+        description: 'A dedicated 300-item multiple-choice examination where every question carries 1 mark (300 x 1 = 300 marks). Covers subject–verb agreement, negatives, questions, frequency adverbs, series vocabulary, word forms, synonyms/antonyms, exchanges, and cloze contexts with a full answer key.',
+        sampleLabel: 'Assessment Scope — 300 x 1 = 300 Marks',
+        sampleHeading: 'Three Hundred Single-Mark Multiple-Choice Items',
+        sampleSubheading: 'Focused multiple-choice testing across grammar, vocabulary, word forms, and exchanges.',
+        chapters: [
+          { ref: 'Parts I–II', title: 'Core Grammar, Negatives, Questions & Adverbs', focus: 'Questions 1–120 (120 marks)' },
+          { ref: 'Parts III–V', title: 'Vocabulary, Word Forms, Exchanges & Cloze', focus: 'Questions 121–300 (180 marks)' }
+        ],
+        paragraphs: [
+          'Every item in this 300-question examination is weighted equally at 1 mark (300 x 1 = 300 marks), allowing clear diagnostic scoring across five focused parts.',
+          'Learners can check every answer against the complete 1–300 answer key and review score bands from Developing to Distinction (A2+ Certified).'
+        ]
+      }
+    ];
+
+    const vocabEntries = [
+      { word: 'archive', partOfSpeech: 'noun', meaning: 'a collection or place where historical records are kept', source: 'First Edition / Second Edition Ch. 24 / Third Edition Ch. 49 / Final Lab 1' },
+      { word: 'routine', partOfSpeech: 'noun', meaning: 'the usual or regular way of doing things', source: 'First Edition Ch. 02 / Third Edition Ch. 03' },
+      { word: 'debug', partOfSpeech: 'verb', meaning: 'to find and correct a computer or program error', source: 'First_Vocab.pdf / Third Edition Ch. 01 / Final Lab 3' },
+      { word: 'schedule', partOfSpeech: 'noun', meaning: 'a plan of activities, routines, and times', source: 'First Edition Ch. 02 & 34 / Third Edition Ch. 45 / First_Vocab.pdf' },
+      { word: 'catalogue', partOfSpeech: 'noun', meaning: 'an organised list or index of items', source: 'Third Edition Ch. 49 / Final Lab 1 / Second_Vocab.pdf' },
+      { word: 'reliable', partOfSpeech: 'adjective', meaning: 'able to be trusted or depended on', source: 'Second Edition Ch. 02 / Third Edition Ch. 06 / First_Vocab.pdf' },
+      { word: 'consistent', partOfSpeech: 'adjective / adverb', meaning: 'regular and steady over time without stopping', source: 'First Edition Ch. 11 & 35 / Second_Vocab.pdf' },
+      { word: 'application', partOfSpeech: 'noun', meaning: 'a computer or phone program; a formal request', source: 'First Edition Ch. 18 / Second Edition Ch. 37 / First_Vocab.pdf' },
+      { word: 'measurement', partOfSpeech: 'noun', meaning: 'the size, amount, or result found by measuring', source: 'Second Edition Ch. 15 & 44 / Final Lab 2' },
+      { word: 'warranty', partOfSpeech: 'noun', meaning: 'a promise to repair or replace a product', source: 'Third Edition Ch. 28 / First_Vocab.pdf' },
+      { word: 'commuter', partOfSpeech: 'noun', meaning: 'a person who travels regularly to work or school', source: 'Second Edition Ch. 38 / Third Edition Ch. 05' },
+      { word: 'moisture', partOfSpeech: 'noun', meaning: 'a small amount of water or dampness', source: 'Second Edition Ch. 44 / Third Edition Ch. 43 / Final Lab 1' }
+    ];
+
+    const readingPaths = {
+      story: {
+        intro: 'Story First starts with everyday narrative chapters to notice the Present Simple in context, pairs them with vocabulary references, and finishes with capstone synthesis and exams.',
+        steps: [
+          { volId: 'first-edition', note: 'Begin with 35 foundational story chapters (A1–A2) and grammar reference.' },
+          { volId: 'second-edition', note: 'Continue with 50 fresh everyday and workplace chapters (A1–A2+).' },
+          { volId: 'third-edition', note: 'Practise 50 structured chapters with Reading Check, Grammar, Writing & Speaking.' },
+          { volId: 'second-vocab', note: 'Look up words across all 135 story chapters using the A–Z index.' },
+          { volId: 'final-edition', note: 'Consolidate with the Error Clinic, Reading Labs, 100 mock items & portfolios.' },
+          { volId: 'test-exam-2', note: 'Test full accuracy on the 300-question single-mark multiple-choice exam.' }
+        ]
+      },
+      vocab: {
+        intro: 'Vocabulary First builds a clear word and verb-form foundation first so story reading and grammar practice feel smoother and less tiring.',
+        steps: [
+          { volId: 'first-vocab', note: 'Study V1, V2, V3, V-ing verb forms, nouns/adjectives, and 100+ practice items.' },
+          { volId: 'second-vocab', note: 'Explore the 135-chapter vocabulary index across Editions 1–3.' },
+          { volId: 'first-edition', note: 'Read 35 story chapters while applying familiar verbs and nouns.' },
+          { volId: 'third-edition', note: 'Work through 50 chapters with guided grammar, writing, and speaking tasks.' },
+          { volId: 'final-edition', note: 'Complete the Error Clinic, Reading Labs, and capstone mock tests.' },
+          { volId: 'test-exam-1', note: 'Measure mastery across six formats in the 300-mark examination.' }
+        ]
+      },
+      exam: {
+        intro: 'Exam Prep First targets test readiness and error correction early, using targeted textbooks and vocabulary lists to close weak spots.',
+        steps: [
+          { volId: 'test-exam-2', note: 'Take a diagnostic run on the 300 multiple-choice questions (300 x 1 = 300 marks).' },
+          { volId: 'final-edition', note: 'Audit mistakes in the Error Clinic and complete the 100-item mock exams.' },
+          { volId: 'first-vocab', note: 'Reinforce verb forms, word types, and grammar rules with 100+ questions.' },
+          { volId: 'third-edition', note: 'Drill sentence accuracy and speaking/writing tasks across 50 chapters.' },
+          { volId: 'second-edition', note: 'Expand reading fluency across 50 original everyday scenarios.' },
+          { volId: 'test-exam-1', note: 'Finish with the 6-format 300-mark Master Examination.' }
+        ]
+      }
+    };
+
+    // Load & persist quiet shelf state safely in localStorage
+    function loadShelfState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return { marks: {}, bookmarks: {} };
+        const parsed = JSON.parse(raw);
+        return {
+          marks: parsed && typeof parsed.marks === 'object' ? parsed.marks : {},
+          bookmarks: parsed && typeof parsed.bookmarks === 'object' ? parsed.bookmarks : {}
+        };
+      } catch (e) {
+        return { marks: {}, bookmarks: {} };
+      }
+    }
+
+    let shelfState = loadShelfState();
+
+    function saveShelfState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(shelfState));
+      } catch (e) {
+        // Ignore storage quota or private mode errors silently
+      }
+      updateShelfSummary();
+    }
+
+    function getMarkLabel(status) {
+      if (status === 'reading') return 'Currently reading';
+      if (status === 'completed') return 'Completed';
+      return 'Unread';
+    }
+
+    function updateShelfSummary() {
+      let markedCount = 0;
+      let bookmarkedCount = 0;
+      volumes.forEach((v) => {
+        const st = shelfState.marks[v.id] || 'unread';
+        if (st !== 'unread') markedCount += 1;
+        if (shelfState.bookmarks[v.id]) bookmarkedCount += 1;
+      });
+      quietShelfSummary.textContent = `${markedCount} marked • ${bookmarkedCount} bookmarked`;
+    }
+
+    let activeCategory = 'all';
+    let searchText = '';
+    let activeSort = 'series';
+    let activeView = 'shelf'; // 'shelf' | 'path' | 'pace' | 'colophon'
+    let activePathKey = 'story';
+    let lookupQuery = '';
+    let currentPaceVolumeId = volumes[0].id;
+    let currentModalVolumeId = volumes[0].id;
+    let currentLeading = '1.92';
+    let currentMeasure = '54ch';
+    let modalReturnFocusEl = null;
+
+    let elapsedSeconds = 0;
+    let timerInterval = null;
+
+    // DOM references
+    const viewSections = {
+      shelf: document.getElementById('shelfViewSection'),
+      path: document.getElementById('pathViewSection'),
+      pace: document.getElementById('paceViewSection'),
+      colophon: document.getElementById('colophonViewSection')
+    };
+    const viewNavBtns = document.querySelectorAll('.view-nav-btn');
+    const quietShelfSummary = document.getElementById('quietShelfSummary');
+
+    const volumeGrid = document.getElementById('volumeGrid');
+    const emptyState = document.getElementById('emptyState');
+    const catalogStatus = document.getElementById('catalogStatus');
+    const searchInput = document.getElementById('volumeSearch');
+    const clearSearchBtn = document.getElementById('clearSearchBtn');
+    const sortSelect = document.getElementById('volumeSort');
+    const resetAllBtn = document.getElementById('resetAllBtn');
+    const filterTabs = document.querySelectorAll('.filter-tab');
+    const ambianceBtns = document.querySelectorAll('.ambiance-btn');
+
+    // Path & Lookup elements
+    const pathIntroNote = document.getElementById('pathIntroNote');
+    const pathStepsList = document.getElementById('pathStepsList');
+    const pathBtns = document.querySelectorAll('.path-btn');
+    const crossLookupInput = document.getElementById('crossLookupInput');
+    const crossLookupCount = document.getElementById('crossLookupCount');
+    const crossLookupResults = document.getElementById('crossLookupResults');
+    const comparisonTableBody = document.getElementById('comparisonTableBody');
+
+    // Pace elements
+    const paceVolumeSelect = document.getElementById('paceVolumeSelect');
+    const paceMeasureContainer = document.getElementById('paceMeasureContainer');
+    const paceEyebrow = document.getElementById('paceEyebrow');
+    const paceLevelBadge = document.getElementById('paceLevelBadge');
+    const paceHeading = document.getElementById('paceHeading');
+    const paceSubheading = document.getElementById('paceSubheading');
+    const paceProse = document.getElementById('paceProse');
+    const paceVolumeTitle = document.getElementById('paceVolumeTitle');
+    const paceVolumeMeta = document.getElementById('paceVolumeMeta');
+    const paceInspectBtn = document.getElementById('paceInspectBtn');
+    const paceDriveLink = document.getElementById('paceDriveLink');
+    const paceWordEstimate = document.getElementById('paceWordEstimate');
+    const paceSessionStatus = document.getElementById('paceSessionStatus');
+    const paceBarFill = document.getElementById('paceBarFill');
+    const paceTimerDisplay = document.getElementById('paceTimerDisplay');
+    const paceToggleTimerBtn = document.getElementById('paceToggleTimerBtn');
+    const paceResetTimerBtn = document.getElementById('paceResetTimerBtn');
+
+    // Modal elements
+    const detailModal = document.getElementById('detailModal');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const modalDoneBtn = document.getElementById('modalDoneBtn');
+    const modalReadPaceBtn = document.getElementById('modalReadPaceBtn');
+    const modalDriveBtn = document.getElementById('modalDriveBtn');
+    const modalEyebrow = document.getElementById('modalEyebrow');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalSubtitle = document.getElementById('modalSubtitle');
+    const modalLevel = document.getElementById('modalLevel');
+    const modalScope = document.getElementById('modalScope');
+    const modalDescription = document.getElementById('modalDescription');
+    const modalStatusSelect = document.getElementById('modalStatusSelect');
+    const modalBookmarkBtn = document.getElementById('modalBookmarkBtn');
+    const modalSampleLabel = document.getElementById('modalSampleLabel');
+    const modalSampleHeading = document.getElementById('modalSampleHeading');
+    const modalSampleBody = document.getElementById('modalSampleBody');
+    const modalReadBookBtn = document.getElementById('modalReadBookBtn');
+
+    // Book Reader Elements
+    const bookReaderModal = document.getElementById('bookReaderModal');
+    const bookSpreadWrapper = document.getElementById('bookSpreadWrapper');
+    const bookCover3D = document.getElementById('bookCover3D');
+    const iframeSpreadOverlay = document.getElementById('iframeSpreadOverlay');
+    const readerLoadingSpinner = document.getElementById('readerLoadingSpinner');
+    const readerCoverEyebrow = document.getElementById('readerCoverEyebrow');
+    const readerCoverTitle = document.getElementById('readerCoverTitle');
+    const readerCoverSubtitle = document.getElementById('readerCoverSubtitle');
+    const readerToolbarTitle = document.getElementById('readerToolbarTitle');
+    const closeReaderBtn = document.getElementById('closeReaderBtn');
+    const pdfIframe = document.getElementById('pdfIframe');
+
+    function escapeHtml(text) {
+      return String(text)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function setActiveView(viewName) {
+      const valid = ['shelf', 'path', 'pace', 'colophon'];
+      activeView = valid.includes(viewName) ? viewName : 'shelf';
+
+      Object.keys(viewSections).forEach((key) => {
+        viewSections[key].classList.toggle('hidden', key !== activeView);
+      });
+
+      viewNavBtns.forEach((btn) => {
+        const isCurrent = btn.getAttribute('data-view') === activeView;
+        btn.setAttribute('aria-selected', String(isCurrent));
+        btn.className = isCurrent
+          ? 'view-nav-btn btn-accent min-h-[34px] flex-1 rounded-full px-3 text-[11px] font-medium sm:flex-initial sm:text-xs'
+          : 'view-nav-btn min-h-[34px] flex-1 rounded-full px-3 text-[11px] font-medium text-muted hover:text-main sm:flex-initial sm:text-xs';
+      });
+
+      if (activeView === 'pace') {
+        loadPaceVolume(currentPaceVolumeId);
+      } else {
+        stopTimer();
+      }
+
+      if (activeView === 'path') {
+        renderReadingPath();
+        renderCrossLookup();
+        renderComparisonTable();
+      }
+    }
+
+    viewNavBtns.forEach((btn) => {
+      btn.addEventListener('click', () => setActiveView(btn.getAttribute('data-view')));
+    });
+
+    document.querySelectorAll('.nav-brand-link').forEach((link) => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        setActiveView('shelf');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    });
+
+    function getFilteredAndSortedVolumes() {
+      const q = searchText.trim().toLowerCase();
+      const filtered = volumes.filter((vol) => {
+        const matchesCat = activeCategory === 'all' || vol.category === activeCategory;
+        if (!matchesCat) return false;
+        if (!q) return true;
+        const chapterStrings = (vol.chapters || []).map((c) => `${c.ref} ${c.title} ${c.focus}`).join(' ');
+        const markLabel = getMarkLabel(shelfState.marks[vol.id] || 'unread');
+        const haystack = [
+          vol.title,
+          vol.shortTitle,
+          vol.fullTitle,
+          vol.fileName,
+          vol.categoryLabel,
+          vol.level,
+          vol.levelFull,
+          vol.scope,
+          vol.summary,
+          vol.description,
+          vol.sampleHeading,
+          chapterStrings,
+          markLabel,
+          ...vol.paragraphs
+        ]
+          .join(' ')
+          .toLowerCase();
+        return haystack.includes(q);
+      });
+
+      const sorted = [...filtered];
+      if (activeSort === 'title-asc') {
+        sorted.sort((a, b) => a.title.localeCompare(b.title));
+      } else if (activeSort === 'category') {
+        const order = { textbooks: 1, vocabulary: 2, exams: 3 };
+        sorted.sort((a, b) => {
+          const diff = (order[a.category] || 9) - (order[b.category] || 9);
+          return diff !== 0 ? diff : a.number.localeCompare(b.number);
+        });
+      } else if (activeSort === 'bookmarked') {
+        sorted.sort((a, b) => {
+          const bmA = shelfState.bookmarks[a.id] ? 0 : 1;
+          const bmB = shelfState.bookmarks[b.id] ? 0 : 1;
+          return bmA !== bmB ? bmA - bmB : a.number.localeCompare(b.number);
+        });
+      } else {
+        sorted.sort((a, b) => a.number.localeCompare(b.number));
+      }
+      return sorted;
+    }
+
+    function renderVolumes() {
+      const list = getFilteredAndSortedVolumes();
+      volumeGrid.innerHTML = '';
+
+      if (list.length === 0) {
+        volumeGrid.classList.add('hidden');
+        emptyState.classList.remove('hidden');
+      } else {
+        emptyState.classList.add('hidden');
+        volumeGrid.classList.remove('hidden');
+
+        list.forEach((vol) => {
+          const markStatus = shelfState.marks[vol.id] || 'unread';
+          const isBookmarked = Boolean(shelfState.bookmarks[vol.id]);
+          const card = document.createElement('article');
+          card.className = 'book-sheet flex min-w-0 flex-col justify-between p-5 sm:p-7';
+
+          card.innerHTML = `
+            <div class="min-w-0">
+              <div class="flex flex-wrap items-center justify-between gap-2 text-xs text-muted">
+                <div class="flex flex-wrap items-center gap-2">
+                  <span class="font-medium tracking-wider text-accent uppercase">${escapeHtml(vol.number)} • ${escapeHtml(vol.categoryLabel)}</span>
+                  <span class="tint-surface rounded-full border px-2 py-0.5 text-[11px] font-medium text-main">${escapeHtml(vol.level)}</span>
+                </div>
+                <span class="truncate font-mono text-[11px] text-muted">${escapeHtml(vol.fileName)}</span>
+              </div>
+
+              <div class="book-spine-accent mt-3.5 rounded-r-xl py-1 pl-3.5">
+                <h2 class="border-0 pb-0 font-serif text-xl font-normal tracking-normal text-main normal-case sm:text-2xl">
+                  ${escapeHtml(vol.title)}
+                </h2>
+              </div>
+
+              <p class="mt-3.5 text-sm leading-relaxed text-main/90">
+                ${escapeHtml(vol.summary)}
+              </p>
+
+              <p class="mt-3 border-t border-soft pt-3 text-xs leading-relaxed text-muted">
+                <strong class="font-medium text-main">Scope:</strong> ${escapeHtml(vol.scope)}
+              </p>
+
+              <!-- Quiet Shelf Mark & Bookmark Strip -->
+              <div class="tint-surface mt-3.5 flex flex-wrap items-center justify-between gap-2 rounded-xl border px-3 py-2 text-xs">
+                <div class="flex min-w-0 items-center gap-2">
+                  <label for="mark-${escapeHtml(vol.id)}" class="shrink-0 text-[11px] text-muted">Shelf:</label>
+                  <select
+                    id="mark-${escapeHtml(vol.id)}"
+                    data-mark-id="${escapeHtml(vol.id)}"
+                    class="shelf-mark-select room-surface min-h-[30px] rounded-full border px-2.5 text-[11px] font-medium text-main focus:outline-none"
+                  >
+                    <option value="unread" ${markStatus === 'unread' ? 'selected' : ''}>Unread</option>
+                    <option value="reading" ${markStatus === 'reading' ? 'selected' : ''}>Currently reading</option>
+                    <option value="completed" ${markStatus === 'completed' ? 'selected' : ''}>Completed</option>
+                  </select>
+                </div>
+
+                <button
+                  type="button"
+                  data-bookmark-id="${escapeHtml(vol.id)}"
+                  aria-pressed="${String(isBookmarked)}"
+                  class="bookmark-toggle-btn min-h-[30px] rounded-full border px-3 text-[11px] font-medium transition ${
+                    isBookmarked ? 'btn-accent border-transparent' : 'room-surface border-soft text-muted hover:text-main'
+                  }"
+                >
+                  ${isBookmarked ? 'Bookmarked' : 'Bookmark'}
+                </button>
+              </div>
+            </div>
+
+            <div class="mt-5 flex flex-wrap items-center justify-between gap-2.5 pt-1">
+              <div class="flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  data-read-id="${escapeHtml(vol.id)}"
+                  class="read-trigger btn-accent inline-flex min-h-[38px] items-center gap-1.5 rounded-full px-4 py-2 text-xs font-medium sm:text-sm shadow-sm transition-transform active:scale-95"
+                >
+                  <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+                  </svg>
+                  <span>Read Book</span>
+                </button>
+                <button
+                  type="button"
+                  data-inspect-id="${escapeHtml(vol.id)}"
+                  class="inspect-trigger tint-surface inline-flex min-h-[38px] items-center gap-1.5 rounded-full border px-4 py-2 text-xs font-medium text-main transition hover:text-accent sm:text-sm"
+                >
+                  <svg class="h-3.5 w-3.5 text-accent" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                    <path d="M12 6.5c-2.2-1.7-5.5-2-8.5-1v13c3-1 6.3-.7 8.5 1 2.2-1.7 5.5-2 8.5-1v-13c-3-1-6.3-.7-8.5 1z" />
+                    <path d="M12 6.5v13.5" />
+                  </svg>
+                  <span>Details</span>
+                </button>
+              </div>
+
+              <a
+                href="${escapeHtml(vol.driveUrl)}"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="room-surface inline-flex min-h-[38px] items-center gap-1.5 rounded-full border px-4 py-2 text-xs font-medium text-muted hover:text-main sm:text-sm"
+                title="Open in Google Drive"
+              >
+                <span>Drive</span>
+                <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                  <polyline points="15 3 21 3 21 9" />
+                  <line x1="10" y1="14" x2="21" y2="3" />
+                </svg>
+              </a>
+            </div>
+          `;
+
+          volumeGrid.appendChild(card);
+        });
+
+        document.querySelectorAll('.read-trigger').forEach((btn) => {
+          btn.addEventListener('click', (e) => {
+            openBookReader(btn.getAttribute('data-read-id'));
+          });
+        });
+
+        document.querySelectorAll('.inspect-trigger').forEach((btn) => {
+          btn.addEventListener('click', (e) => {
+            openDetailModal(btn.getAttribute('data-inspect-id'), e.currentTarget);
+          });
+        });
+
+        document.querySelectorAll('.shelf-mark-select').forEach((sel) => {
+          sel.addEventListener('change', (e) => {
+            const id = sel.getAttribute('data-mark-id');
+            shelfState.marks[id] = e.target.value;
+            saveShelfState();
+          });
+        });
+
+        document.querySelectorAll('.bookmark-toggle-btn').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const id = btn.getAttribute('data-bookmark-id');
+            shelfState.bookmarks[id] = !shelfState.bookmarks[id];
+            saveShelfState();
+            renderVolumes();
+          });
+        });
+      }
+
+      const catLabel = activeCategory === 'all' ? 'all volumes' : activeCategory;
+      const qLabel = searchText.trim() ? ` matching "${searchText.trim()}"` : '';
+      catalogStatus.textContent = `Showing ${list.length} of ${volumes.length} in ${catLabel}${qLabel}`;
+    }
+
+    // Reading Path rendering
+    function renderReadingPath() {
+      const selected = readingPaths[activePathKey] || readingPaths.story;
+      pathIntroNote.textContent = selected.intro;
+
+      pathBtns.forEach((btn) => {
+        const isAct = btn.getAttribute('data-path') === activePathKey;
+        btn.className = isAct
+          ? 'path-btn btn-accent min-h-[36px] flex-1 rounded-full px-3.5 text-xs font-medium sm:flex-initial'
+          : 'path-btn min-h-[36px] flex-1 rounded-full px-3.5 text-xs font-medium text-muted hover:text-main sm:flex-initial';
+      });
+
+      pathStepsList.innerHTML = selected.steps
+        .map((step, idx) => {
+          const vol = volumes.find((v) => v.id === step.volId) || volumes[0];
+          return `
+            <li class="tint-surface flex min-w-0 flex-col justify-between gap-3 rounded-2xl border p-4 sm:p-5">
+              <div>
+                <div class="flex items-center justify-between gap-2 text-xs text-muted">
+                  <span class="font-medium text-accent">Step ${idx + 1} • Vol. ${escapeHtml(vol.number)}</span>
+                  <span class="font-mono text-[11px]">${escapeHtml(vol.fileName)}</span>
+                </div>
+                <p class="mt-1.5 font-serif text-lg font-normal text-main">${escapeHtml(vol.title)}</p>
+                <p class="mt-1 text-xs leading-relaxed text-muted">${escapeHtml(step.note)}</p>
+              </div>
+              <div class="flex flex-wrap items-center gap-2 pt-1">
+                <button
+                  type="button"
+                  data-open-vol="${escapeHtml(vol.id)}"
+                  class="path-detail-btn btn-accent min-h-[32px] rounded-full px-3 text-[11px] font-medium shadow-sm transition-transform active:scale-95"
+                >
+                  Read Book
+                </button>
+                <button
+                  type="button"
+                  data-inspect-vol="${escapeHtml(vol.id)}"
+                  class="path-inspect-btn room-surface min-h-[32px] rounded-full border px-3 text-[11px] font-medium text-main hover:text-accent"
+                >
+                  Details
+                </button>
+              </div>
+            </li>
+          `;
+        })
+        .join('');
+
+      document.querySelectorAll('.path-detail-btn').forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+          openBookReader(btn.getAttribute('data-open-vol'));
+        });
+      });
+
+      document.querySelectorAll('.path-inspect-btn').forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+          openDetailModal(btn.getAttribute('data-inspect-vol'), e.currentTarget);
+        });
+      });
+    }
+
+    pathBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        activePathKey = btn.getAttribute('data-path');
+        renderReadingPath();
+      });
+    });
+
+    // Chapter & Vocabulary Cross-Search
+    function renderCrossLookup() {
+      const q = lookupQuery.trim().toLowerCase();
+      const chapterMatches = [];
+
+      volumes.forEach((vol) => {
+        (vol.chapters || []).forEach((ch) => {
+          if (!q || `${ch.ref} ${ch.title} ${ch.focus} ${vol.title} ${vol.shortTitle}`.toLowerCase().includes(q)) {
+            chapterMatches.push({
+              kind: 'Chapter / Section',
+              title: `${ch.ref} — ${ch.title}`,
+              detail: ch.focus,
+              location: `${vol.shortTitle} (${vol.fileName})`,
+              volId: vol.id,
+              driveUrl: vol.driveUrl
+            });
+          }
+        });
+      });
+
+      const wordMatches = vocabEntries
+        .filter((entry) => {
+          if (!q) return true;
+          return `${entry.word} ${entry.partOfSpeech} ${entry.meaning} ${entry.source}`.toLowerCase().includes(q);
+        })
+        .map((entry) => ({
+          kind: `Vocabulary • ${entry.partOfSpeech}`,
+          title: entry.word,
+          detail: entry.meaning,
+          location: entry.source,
+          volId: 'second-vocab',
+          driveUrl: 'https://drive.google.com/file/d/1OhyNI16PEHlxkXWWU7uglgYPgnbWYNyq/view?usp=drivesdk'
+        }));
+
+      const combined = [
+        ...chapterMatches.slice(0, q ? 8 : 4),
+        ...wordMatches.slice(0, q ? 8 : 4)
+      ];
+
+      crossLookupCount.textContent = q
+        ? `Found ${chapterMatches.length} chapter/section match(es) and ${wordMatches.length} vocabulary match(es) for "${lookupQuery.trim()}"`
+        : 'Showing featured series chapters & vocabulary words — type any word or chapter title to search';
+
+      if (combined.length === 0) {
+        crossLookupResults.innerHTML = `
+          <div class="tint-surface col-span-full rounded-2xl border p-5 text-center text-sm text-muted">
+            No chapter or vocabulary match for "${escapeHtml(lookupQuery.trim())}". Try "archive", "routine", "debug", "schedule", or "Programming".
+          </div>
+        `;
+        return;
+      }
+
+      crossLookupResults.innerHTML = combined
+        .map(
+          (item) => `
+            <div class="tint-surface flex min-w-0 flex-col justify-between gap-2.5 rounded-2xl border p-4">
+              <div>
+                <div class="flex flex-wrap items-center justify-between gap-1 text-[11px] text-accent">
+                  <span class="font-medium uppercase tracking-wider">${escapeHtml(item.kind)}</span>
+                  <span class="text-muted">${escapeHtml(item.location)}</span>
+                </div>
+                <p class="mt-1 font-serif text-lg font-normal text-main">${escapeHtml(item.title)}</p>
+                <p class="mt-1 text-xs leading-relaxed text-muted">${escapeHtml(item.detail)}</p>
+              </div>
+              <div class="flex items-center justify-between gap-2 pt-1 text-xs">
+                <button
+                  type="button"
+                  data-lookup-vol="${escapeHtml(item.volId)}"
+                  class="lookup-inspect-btn font-medium text-main underline-offset-4 hover:underline"
+                >
+                  Inspect Volume
+                </button>
+                <a
+                  href="${escapeHtml(item.driveUrl)}"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="font-medium text-accent underline-offset-4 hover:underline"
+                >
+                  Open PDF
+                </a>
+              </div>
+            </div>
+          `
+        )
+        .join('');
+
+      document.querySelectorAll('.lookup-inspect-btn').forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+          openDetailModal(btn.getAttribute('data-lookup-vol'), e.currentTarget);
+        });
+      });
+    }
+
+    crossLookupInput.addEventListener('input', (e) => {
+      lookupQuery = e.target.value;
+      renderCrossLookup();
+    });
+
+    document.querySelectorAll('.quick-term-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const term = btn.getAttribute('data-quick-term') || '';
+        lookupQuery = term;
+        crossLookupInput.value = term;
+        renderCrossLookup();
+      });
+    });
+
+    // Edition Comparison Table
+    function renderComparisonTable() {
+      comparisonTableBody.innerHTML = volumes
+        .map(
+          (vol) => `
+            <tr>
+              <td class="px-3.5 py-2.5 font-medium text-main">${escapeHtml(vol.shortTitle)}</td>
+              <td class="px-3.5 py-2.5 text-muted">${escapeHtml(vol.formatLabel)}</td>
+              <td class="px-3.5 py-2.5 text-main">${escapeHtml(vol.countLabel)}</td>
+              <td class="px-3.5 py-2.5 text-muted">${escapeHtml(vol.level)}</td>
+              <td class="px-3.5 py-2.5">
+                <a
+                  href="${escapeHtml(vol.driveUrl)}"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="font-medium text-accent underline-offset-4 hover:underline"
+                >
+                  ${escapeHtml(vol.fileName)}
+                </a>
+              </td>
+            </tr>
+          `
+        )
+        .join('');
+    }
+
+    // Ambiance Switcher
+    function applyAmbiance(mode) {
+      const validModes = ['paper', 'dusk', 'lamp'];
+      const chosen = validModes.includes(mode) ? mode : 'paper';
+      document.documentElement.setAttribute('data-ambiance', chosen);
+      ambianceBtns.forEach((btn) => {
+        const isSelected = btn.getAttribute('data-ambiance') === chosen;
+        btn.setAttribute('aria-pressed', String(isSelected));
+        const baseClasses = btn.closest('.lg\\:hidden')
+          ? 'ambiance-btn min-h-[32px] rounded-full px-2.5 text-[11px] font-medium'
+          : 'ambiance-btn min-h-[34px] rounded-full px-3 text-xs font-medium';
+        btn.className = isSelected
+          ? `${baseClasses} btn-accent`
+          : `${baseClasses} text-muted hover:text-main`;
+      });
+    }
+
+    ambianceBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        applyAmbiance(btn.getAttribute('data-ambiance'));
+      });
+    });
+
+    // Reading Pace mode helpers
+    function populatePaceSelect() {
+      paceVolumeSelect.innerHTML = volumes
+        .map(
+          (v) =>
+            `<option value="${escapeHtml(v.id)}">${escapeHtml(v.number)}. ${escapeHtml(v.shortTitle)} (${escapeHtml(v.level)}) — ${escapeHtml(v.sampleHeading)}</option>`
+        )
+        .join('');
+    }
+
+    function updatePaceMetrics(wordCount) {
+      const calmWpm = 125;
+      const minutes = Math.max(1, Math.round((wordCount / calmWpm) * 10) / 10);
+      const targetSec = Math.max(30, Math.round((wordCount / calmWpm) * 60));
+      const pct = Math.min(100, Math.round((elapsedSeconds / targetSec) * 100));
+
+      paceWordEstimate.textContent = `${wordCount} words • ~${minutes} min at ${calmWpm} wpm`;
+      paceSessionStatus.textContent = `Session guide: ${targetSec}s (${pct}%)`;
+      paceBarFill.style.width = `${pct}%`;
+    }
+
+    function loadPaceVolume(volId) {
+      const vol = volumes.find((v) => v.id === volId) || volumes[0];
+      currentPaceVolumeId = vol.id;
+      paceVolumeSelect.value = vol.id;
+
+      paceEyebrow.textContent = vol.sampleLabel;
+      paceLevelBadge.textContent = `${vol.levelFull} • ${vol.fileName}`;
+      paceHeading.textContent = vol.sampleHeading;
+      paceSubheading.textContent = vol.sampleSubheading;
+      paceProse.innerHTML = vol.paragraphs.map((p) => `<p>${escapeHtml(p)}</p>`).join('');
+      paceProse.style.lineHeight = currentLeading;
+      paceMeasureContainer.style.maxWidth = currentMeasure;
+
+      paceVolumeTitle.textContent = `Vol. ${vol.number} — ${vol.title}`;
+      paceVolumeMeta.textContent = vol.scope;
+      paceDriveLink.href = vol.driveUrl;
+
+      const wordCount = vol.paragraphs.join(' ').trim().split(/\s+/).filter(Boolean).length;
+      updatePaceMetrics(wordCount);
+    }
+
+    function formatTime(sec) {
+      const mins = Math.floor(sec / 60);
+      const rem = sec % 60;
+      return `${String(mins).padStart(2, '0')}:${String(rem).padStart(2, '0')}`;
+    }
+
+    function stopTimer() {
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
+      paceToggleTimerBtn.textContent = 'Start Session';
+    }
+
+    function startTimer() {
+      if (timerInterval) return;
+      paceToggleTimerBtn.textContent = 'Pause';
+      timerInterval = setInterval(() => {
+        elapsedSeconds += 1;
+        paceTimerDisplay.textContent = formatTime(elapsedSeconds);
+        const vol = volumes.find((v) => v.id === currentPaceVolumeId) || volumes[0];
+        const wordCount = vol.paragraphs.join(' ').trim().split(/\s+/).filter(Boolean).length;
+        updatePaceMetrics(wordCount);
+      }, 1000);
+    }
+
+    // Accessible Detail Modal
+    function syncModalBookmarkBtn(volId) {
+      const isBm = Boolean(shelfState.bookmarks[volId]);
+      modalBookmarkBtn.textContent = isBm ? 'Bookmarked' : 'Bookmark';
+      modalBookmarkBtn.setAttribute('aria-pressed', String(isBm));
+      modalBookmarkBtn.className = isBm
+        ? 'btn-accent min-h-[32px] rounded-full px-3 text-xs font-medium'
+        : 'room-surface min-h-[32px] rounded-full border border-soft px-3 text-xs font-medium text-muted hover:text-main';
+    }
+
+    function openDetailModal(volId, triggerEl) {
+      const vol = volumes.find((v) => v.id === volId) || volumes[0];
+      currentModalVolumeId = vol.id;
+      currentPaceVolumeId = vol.id;
+      modalReturnFocusEl = triggerEl || document.activeElement;
+
+      modalEyebrow.textContent = `Volume ${vol.number} • ${vol.categoryLabel} • ${vol.fileName}`;
+      modalTitle.textContent = vol.title;
+      modalSubtitle.textContent = vol.fileName;
+      modalLevel.textContent = `${vol.levelFull} (${vol.fileName})`;
+      modalScope.textContent = vol.scope;
+      modalDescription.textContent = vol.description;
+
+      modalStatusSelect.value = shelfState.marks[vol.id] || 'unread';
+      syncModalBookmarkBtn(vol.id);
+
+      modalSampleLabel.textContent = vol.sampleLabel;
+      modalSampleHeading.textContent = vol.sampleHeading;
+      modalSampleBody.innerHTML = vol.paragraphs.map((p) => `<p>${escapeHtml(p)}</p>`).join('');
+      modalDriveBtn.href = vol.driveUrl;
+
+      detailModal.classList.remove('hidden');
+      detailModal.classList.add('flex');
+      document.body.style.overflow = 'hidden';
+      closeModalBtn.focus();
+    }
+
+    function closeDetailModal() {
+      detailModal.classList.add('hidden');
+      detailModal.classList.remove('flex');
+      document.body.style.overflow = '';
+      if (modalReturnFocusEl && typeof modalReturnFocusEl.focus === 'function') {
+        modalReturnFocusEl.focus();
+        modalReturnFocusEl = null;
+      }
+    }
+
+    modalStatusSelect.addEventListener('change', (e) => {
+      shelfState.marks[currentModalVolumeId] = e.target.value;
+      saveShelfState();
+      renderVolumes();
+    });
+
+    modalBookmarkBtn.addEventListener('click', () => {
+      shelfState.bookmarks[currentModalVolumeId] = !shelfState.bookmarks[currentModalVolumeId];
+      saveShelfState();
+      syncModalBookmarkBtn(currentModalVolumeId);
+      renderVolumes();
+    });
+
+    // Filter, Search & Sort events
+    filterTabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        activeCategory = tab.getAttribute('data-filter');
+        filterTabs.forEach((other) => {
+          const selected = other === tab;
+          other.setAttribute('aria-selected', String(selected));
+          other.className = selected
+            ? 'filter-tab btn-accent min-h-[38px] rounded-full px-3.5 py-1.5 text-xs font-medium sm:px-4 sm:text-sm'
+            : 'filter-tab book-sheet min-h-[38px] rounded-full px-3.5 py-1.5 text-xs font-medium text-muted hover:text-main sm:px-4 sm:text-sm';
+        });
+        renderVolumes();
+      });
+    });
+
+    searchInput.addEventListener('input', (e) => {
+      searchText = e.target.value;
+      clearSearchBtn.classList.toggle('hidden', searchText.length === 0);
+      renderVolumes();
+    });
+
+    clearSearchBtn.addEventListener('click', () => {
+      searchText = '';
+      searchInput.value = '';
+      clearSearchBtn.classList.add('hidden');
+      renderVolumes();
+      searchInput.focus();
+    });
+
+    sortSelect.addEventListener('change', (e) => {
+      activeSort = e.target.value;
+      renderVolumes();
+    });
+
+    resetAllBtn.addEventListener('click', () => {
+      searchText = '';
+      searchInput.value = '';
+      clearSearchBtn.classList.add('hidden');
+      activeCategory = 'all';
+      activeSort = 'series';
+      sortSelect.value = 'series';
+      filterTabs.forEach((tab, index) => {
+        const first = index === 0;
+        tab.setAttribute('aria-selected', String(first));
+        tab.className = first
+          ? 'filter-tab btn-accent min-h-[38px] rounded-full px-3.5 py-1.5 text-xs font-medium sm:px-4 sm:text-sm'
+          : 'filter-tab book-sheet min-h-[38px] rounded-full px-3.5 py-1.5 text-xs font-medium text-muted hover:text-main sm:px-4 sm:text-sm';
+      });
+      renderVolumes();
+    });
+
+    // Pace view controls
+    paceVolumeSelect.addEventListener('change', (e) => {
+      loadPaceVolume(e.target.value);
+    });
+
+    document.querySelectorAll('.pace-leading-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        currentLeading = btn.getAttribute('data-leading');
+        paceProse.style.lineHeight = currentLeading;
+        document.querySelectorAll('.pace-leading-btn').forEach((other) => {
+          const active = other === btn;
+          other.className = active
+            ? 'pace-leading-btn btn-accent min-h-[32px] rounded-full px-2.5 py-1 text-[11px] font-medium'
+            : 'pace-leading-btn min-h-[32px] rounded-full px-2.5 py-1 text-[11px] text-muted hover:text-main';
+        });
+      });
+    });
+
+    document.querySelectorAll('.pace-measure-btn').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        currentMeasure = btn.getAttribute('data-measure');
+        paceMeasureContainer.style.maxWidth = currentMeasure;
+        document.querySelectorAll('.pace-measure-btn').forEach((other) => {
+          const active = other === btn;
+          other.className = active
+            ? 'pace-measure-btn btn-accent min-h-[32px] rounded-full px-2.5 py-1 text-[11px] font-medium'
+            : 'pace-measure-btn min-h-[32px] rounded-full px-2.5 py-1 text-[11px] text-muted hover:text-main';
+        });
+      });
+    });
+
+    paceToggleTimerBtn.addEventListener('click', () => {
+      if (timerInterval) {
+        stopTimer();
+      } else {
+        startTimer();
+      }
+    });
+
+    paceResetTimerBtn.addEventListener('click', () => {
+      stopTimer();
+      elapsedSeconds = 0;
+      paceTimerDisplay.textContent = '00:00';
+      const vol = volumes.find((v) => v.id === currentPaceVolumeId) || volumes[0];
+      const wordCount = vol.paragraphs.join(' ').trim().split(/\s+/).filter(Boolean).length;
+      updatePaceMetrics(wordCount);
+    });
+
+    paceInspectBtn.addEventListener('click', (e) => {
+      openDetailModal(currentPaceVolumeId, e.currentTarget);
+    });
+
+    // Modal controls & Escape key
+    closeModalBtn.addEventListener('click', closeDetailModal);
+    modalDoneBtn.addEventListener('click', closeDetailModal);
+    detailModal.addEventListener('click', (e) => {
+      if (e.target === detailModal) closeDetailModal();
+    });
+    modalReadPaceBtn.addEventListener('click', () => {
+      const id = currentModalVolumeId;
+      closeDetailModal();
+      setActiveView('pace');
+      loadPaceVolume(id);
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !detailModal.classList.contains('hidden')) {
+        closeDetailModal();
+      }
+    });
+
+    if(modalReadBookBtn) {
+      modalReadBookBtn.addEventListener('click', () => {
+        const id = currentModalVolumeId;
+        closeDetailModal();
+        openBookReader(id);
+      });
+    }
+
+    // Book Reader Logic
+    function getPreviewUrl(driveUrl) {
+      if (!driveUrl) return '';
+      return driveUrl.replace(/\/view\?usp=drivesdk$/, '/preview');
+    }
+
+    function openBookReader(volId) {
+      const vol = volumes.find((v) => v.id === volId) || volumes[0];
+      
+      // Reset states
+      bookSpreadWrapper.classList.add('closed');
+      bookSpreadWrapper.classList.remove('open');
+      bookCover3D.classList.remove('open');
+      iframeSpreadOverlay.classList.remove('show');
+      pdfIframe.src = '';
+      readerLoadingSpinner.classList.remove('hidden');
+
+      readerCoverEyebrow.textContent = `Vol ${vol.number} • ${vol.level}`;
+      readerCoverTitle.textContent = vol.title;
+      readerCoverSubtitle.textContent = vol.fullTitle;
+      readerToolbarTitle.textContent = vol.shortTitle;
+
+      bookReaderModal.classList.remove('hidden');
+      bookReaderModal.classList.add('flex');
+      
+      requestAnimationFrame(() => {
+        bookReaderModal.classList.remove('opacity-0');
+        bookReaderModal.classList.add('opacity-100');
+        
+        setTimeout(() => {
+          // Trigger 3D Opening Animation (Translates to center & Cover flips)
+          bookSpreadWrapper.classList.remove('closed');
+          bookSpreadWrapper.classList.add('open');
+          bookCover3D.classList.add('open');
+          
+          setTimeout(() => {
+            // Fade in the 2-page iframe spread over the opened book
+            iframeSpreadOverlay.classList.add('show');
+            pdfIframe.src = getPreviewUrl(vol.driveUrl);
+          }, 600); 
+        }, 150);
+      });
+    }
+
+    function closeBookReader() {
+      // Fade out the iframe overlay first
+      iframeSpreadOverlay.classList.remove('show');
+      
+      setTimeout(() => {
+        // Trigger 3D Closing Animation
+        bookSpreadWrapper.classList.add('closed');
+        bookSpreadWrapper.classList.remove('open');
+        bookCover3D.classList.remove('open');
+        
+        setTimeout(() => {
+          bookReaderModal.classList.remove('opacity-100');
+          bookReaderModal.classList.add('opacity-0');
+          pdfIframe.src = '';
+          
+          setTimeout(() => {
+            bookReaderModal.classList.remove('flex');
+            bookReaderModal.classList.add('hidden');
+          }, 300);
+        }, 800); 
+      }, 400); 
+    }
+    
+    pdfIframe.addEventListener('load', () => {
+      if(pdfIframe.src && pdfIframe.src.includes('preview')) {
+        readerLoadingSpinner.classList.add('hidden');
+      }
+    });
+
+    closeReaderBtn.addEventListener('click', closeBookReader);
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !bookReaderModal.classList.contains('hidden')) {
+        closeBookReader();
+      }
+    });
+
+    updateShelfSummary();
+    populatePaceSelect();
+    renderVolumes();
+  </script>
+</body>
+</html>
